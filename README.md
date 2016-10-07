@@ -12,3 +12,5 @@ pandas
 PyMySQL
 sqlalchemy
 ```
+
+and create database called `trade` in mysql server.
