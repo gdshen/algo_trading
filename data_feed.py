@@ -21,4 +21,4 @@ def get_real_quotes_and_persist(instrument):
 
 
 if __name__ == "__main__":
-    get_real_quotes_and_persi
+    get_real_quotes_and_persist('600848')
