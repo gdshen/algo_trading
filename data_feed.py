@@ -1,3 +1,5 @@
+# Please run this code with Python3!
+
 import tushare as ts
 import pandas as pd
 from sqlalchemy import create_engine
