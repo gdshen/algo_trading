@@ -1,1 +1,0 @@
-All code under this directory should be run under python2.
