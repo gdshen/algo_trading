@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+
+{% block main %}
+<div class="row">
+
+	<div class="col-md-9">
+		
+		{% with messages = get_flashed_messages() %}
+		  {% if messages %}
+		    <ul class=flashes>
+		    {% for message in messages %}
+		    <span class="label label-success">{{message}}</span>
+		    {% endfor %}
+		    </ul>
+		  {% endif %}
+		{% endwith %}
+		<form method="POST" action="" id="admin_note_edit" class="well form-horizontal">
+			<fieldset>
+          		<legend>
+          			{{title}}
+          			{% if note %}
+          			<a href="/notes/{{note.id}}">view note</a>
+          			{% endif %}
+
+          		</legend>
+				<div class="control-group">
+					<label class="control-label" for="title">Title</label>
+					<div class="controls">
+					  <input type="text" class="span7 input-xlarge" name="title" id="title" value="{{note.title}}">
+					  <p class="hide help-block">In addition to freeform text, any HTML5 text-based input appears like so.</p>
+					</div>
+				</div>
+
+				
+		
+				<div class="control-group">
+					<label class="control-label" for="content">Note</label>
+					<div class="controls">
+					  <textarea class="span10 input-xlarge" style="resize:both; width: 810px; height: 350px;" name="content" id="content">{{note.content}}</textarea>
+					  
+					</div>
+				</div>
+          	</fieldset>
+
+			
+			<input type="submit" value="Save note" class="btn btn-primary">
+		</form>
+	</div>
+
+	
+</div>
+
+
+{% endblock %}
+
+{% block scripts %}{% endblock %}

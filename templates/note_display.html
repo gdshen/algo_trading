@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="page-header">
+	<h1>{{note.title}}</h1>
+	{% if current_user.id == note.user.id%}
+    <p><a href="/notes/{{note.id}}/edit"><span class="label label-info">edit</span></a></p>
+    {% endif %}
+	
+</div>
+
+<div class="row">
+	
+	<div class="col-md-10">
+		
+		<div id="notes">
+			{{ note.content }}
+		</div>
+		
+	</div>
+</div>
+{% endblock %}
+
+{% block styles %}{% endblock %}
+{% block scripts %}{% endblock %}
