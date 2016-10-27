@@ -1,24 +1,43 @@
-import os
-from flask import Flask, render_template, request, redirect
-from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
+from flask import Flask, redirect
 from flask_login import LoginManager
-from flask_bcrypt import Bcrypt  # for password hashing
+from user import User
+from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
+from flask_bcrypt import Bcrypt
 
-# create and named flask app
-app = Flask('trade_demo')
+app = Flask(__name__)
 
-# app.config['MONGODB_SETTINGS'] = {'HOST': os.environ.get('MONGOLAB_URI'), 'DB':'FlaskLogin'}
-app.config['SECRET_KEY'] = 'this_is_a_secret_key'  # os.environ.get('SECRET_KEY')
-app.debug = True  # os.environ.get('DEBUG', False)
-
-db = MongoEngine(app)
-app.session_interface = MongoEngineSessionInterface(db)  # modify flask default session system (werkzeug
-
-# flask bcrypt will be used to salt the user password
-flask_bcrypt = Bcrypt(app)
-
-# associate flask-login manager with current app
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+app.config['SECRET_KEY'] = 'this_is_a_secret_key'
+app.debug = True
 
+
+db = MongoEngine(app)
+app.session_interface = MongoEngineSessionInterface(db)
+
+flask_bcrypt = Bcrypt(app)
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return 'hello, world'
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    pass
+    # user = User()
+    # user.email = 'gdshen95@gmail.com'
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    if user_id is None:
+        redirect('/login')
+    user = User()
+    user.get_by_id(user_id)
+    if user.is_active():
+        return user
+    else:
+        return None
