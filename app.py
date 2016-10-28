@@ -32,7 +32,6 @@ def home():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # todo add password hash
     if not current_user.is_anonymous:
         # flash("You have login, return to homepage!")
         return redirect('/')
@@ -42,10 +41,9 @@ def login():
         email = form.email.data
         password = form.password.data
         user_obj.get_by_email(email, password_acquirement=True)
-        if password == user_obj.password:
+        if flask_bcrypt.check_password_hash(user_obj.password, password):
             login_user(user_obj)
-            # todo to see how to use flask flash
-            # flash("Logged in!")
+            flash("Logged in!")
         else:
             logging.debug('login-- user {} has input wrong password'.format(email))
         return redirect('/')
@@ -59,7 +57,7 @@ def register():
         if form.validate():
             user_obj = User()
             email = form.email.data
-            password = form.password.data
+            password = flask_bcrypt.generate_password_hash(form.password.data)
             user_obj.email = email
             user_obj.password = password
             user_obj.save()
