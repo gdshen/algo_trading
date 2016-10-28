@@ -35,3 +35,19 @@ After set configuration from this tutorial, just use `net start MongoDB` to star
 2. login view
 3. forms
 
+## Python docstring
+
+```python
+def function_name(param1, param2):
+    '''describe what this functino does in one line
+    
+    multipline to describle what this function does
+    
+    :param param1: first arg
+    :type param1: first arg type
+    :param param2: second arg
+    :type param2: second arg type
+    :return return_value
+    :rtype: return type of the return value
+    '''
+```

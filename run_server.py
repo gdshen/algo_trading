@@ -1,5 +1,5 @@
 from app import app
-# todo using https for the entire url
 
 if __name__ == '__main__':
-    app.run()
+    context = ('trade_gdshen_me.crt', 'trade_gdshen_me.key')
+    app.run(port=443, ssl_context=context)

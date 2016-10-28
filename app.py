@@ -79,7 +79,6 @@ def unauthorized_callback():
     return redirect('/login')
 
 
-# todo: to find the comment style for python methods
 # user_loader is required by flask_login extension
 # input: unicode of user_id
 # ouput: User class or None

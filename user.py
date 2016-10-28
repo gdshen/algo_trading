@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+import logging
 import models
 
 
@@ -14,7 +15,7 @@ class User(UserMixin):
         # persist user information to database
         new_user = models.User(email=self.email, password=self.password, active=self.active)
         new_user.save()
-        print("new user id = {}".format(new_user.id))
+        logging.debug("register - - new user id = {}".format(new_user.id))
         self.id = new_user.id
         return self.id
 
