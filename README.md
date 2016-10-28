@@ -6,13 +6,10 @@ Algorithmic Trading Code Of SJTU Team
 ## Dependency
 to run data_feed.py, we need
 
-```bash
+```
+easyquotation
 tushare
 pandas
-pymongo
-PyMySQL
-sqlalchemy
-Flask-PyMongo
 mongoengine
 flask-mongoengine
 flask-bcrypt

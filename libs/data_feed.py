@@ -46,7 +46,7 @@ data_types = {
 }
 
 
-# TODO survey how to create primary key, do we need index
+# replace mysql with mongodb
 def get_real_quotes_and_persist(instrument):
     df = ts.get_realtime_quotes(instrument)
     engine = create_engine(

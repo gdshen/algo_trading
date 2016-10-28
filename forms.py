@@ -1,6 +1,5 @@
 import models
-from flask_wtf import Form
-from wtforms import StringField, PasswordField
+from wtforms import PasswordField
 from flask_mongoengine.wtf import model_form
 from flask_mongoengine.wtf.orm import validators
 
@@ -16,8 +15,3 @@ class SignupForm(user_form):
 
 class LoginForm(user_form):
     password = PasswordField('Password', validators=[validators.DataRequired()])
-
-
-class SimpleForm(Form):
-    email = StringField()
-    password = PasswordField()

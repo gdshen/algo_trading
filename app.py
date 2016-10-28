@@ -1,11 +1,14 @@
 from flask import Flask, redirect, request, flash, render_template
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 
-from forms import SimpleForm
+from forms import SignupForm, LoginForm
 from user import User
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
+import logging
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -24,37 +27,46 @@ toolbar = DebugToolbarExtension(app)
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('base.html')
+    return render_template('home.html', email=current_user.email)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    form = SimpleForm()
+    # todo add password hash
+    if not current_user.is_anonymous:
+        # flash("You have login, return to homepage!")
+        return redirect('/')
+    form = LoginForm(request.form)
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
         user_obj = User()
+        email = form.email.data
+        password = form.password.data
         user_obj.get_by_email(email, password_acquirement=True)
-        if email == user_obj.email and password == user_obj.password:
+        if password == user_obj.password:
             login_user(user_obj)
+            # todo to see how to use flask flash
             # flash("Logged in!")
+        else:
+            logging.debug('login-- user {} has input wrong password'.format(email))
         return redirect('/')
     return render_template('login.html', form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    form = SimpleForm()
+    form = SignupForm(request.form)
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
-
-        user_obj = User()
-        user_obj.email = email
-        user_obj.password = password
-        user_obj.save()
-        return redirect('/login')
+        if form.validate():
+            user_obj = User()
+            email = form.email.data
+            password = form.password.data
+            user_obj.email = email
+            user_obj.password = password
+            user_obj.save()
+            logging.debug('Register-- {} registered'.format(email))
+            return redirect('/login')
+        else:
+            logging.debug('Register-- validate check failed')
     return render_template('register.html', form=form)
 
 
@@ -64,6 +76,15 @@ def logout():
     return redirect('/login')
 
 
+@login_manager.unauthorized_handler
+def unauthorized_callback():
+    return redirect('/login')
+
+
+# todo: to find the comment style for python methods
+# user_loader is required by flask_login extension
+# input: unicode of user_id
+# ouput: User class or None
 @login_manager.user_loader
 def load_user(user_id):
     if user_id is None:
