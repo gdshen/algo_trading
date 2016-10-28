@@ -16,6 +16,7 @@ Flask-PyMongo
 mongoengine
 flask-mongoengine
 flask-bcrypt
+flask-debugtoolbar
 ```
 
 and create database called `trade` in mysql server.
