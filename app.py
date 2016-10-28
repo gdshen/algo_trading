@@ -35,14 +35,12 @@ def login():
         password = request.form['password']
 
         user_obj = User()
-        user_obj.get_by_id('5812dfabe8723d1d64bf3cfa')
-        # if email == user_obj.email and password == user_obj.password:
-        login_user(user_obj)
-        flash("Logged in!")
+        user_obj.get_by_email(email, password_acquirement=True)
+        if email == user_obj.email and password == user_obj.password:
+            login_user(user_obj)
+            # flash("Logged in!")
         return redirect('/')
     return render_template('login.html', form=form)
-    # user = User()
-    # user.email = 'gdshen95@gmail.com'
 
 
 @app.route('/logout')

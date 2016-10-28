@@ -8,25 +8,37 @@ class User(UserMixin):
         self.password = password
         self.active = active
         self.is_admin = False
-        self.user_id = None
+        self.id = None
 
     def save(self):
         # persist user information to database
         new_user = models.User(email=self.email, password=self.password, active=self.active)
         new_user.save()
         print("new user id = {}".format(new_user.id))
-        self.user_id = new_user.id
-        return self.user_id
+        self.id = new_user.id
+        return self.id
 
     def get_id(self):
-        return self.user_id
+        return self.id
+
+    def get_by_email(self, email, password_acquirement=False):
+        db_user = models.User.objects.get(email=email)
+        if db_user:
+            self.email = db_user.email
+            self.active = db_user.active
+            self.id = db_user.id
+            if password_acquirement:
+                self.password = db_user.password
+            return self
+        else:
+            return None
 
     def get_by_id(self, user_id):
         db_user = models.User.objects.with_id(user_id)
         if db_user:
             self.email = db_user.email
             self.active = db_user.active
-            self.user_id = db_user.id
+            self.id = db_user.id
 
             return self
         else:
@@ -45,4 +57,4 @@ if __name__ == '__main__':
 
     # get a user information from database
     another_user = User()
-    another_user.get_by_id(user.user_id)
+    another_user.get_by_id(user.id)
