@@ -13,4 +13,4 @@ class SignupForm(user_form):
 
 
 class LoginForm(user_form):
-        password = PasswordField('Password', validators = [validators.DataRequired()])
+        password = PasswordField('Password', validators=[validators.DataRequired()])

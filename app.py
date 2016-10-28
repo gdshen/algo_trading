@@ -1,17 +1,14 @@
 from flask import Flask, redirect
-from flask_login import LoginManager
+from flask_login import LoginManager, login_user, logout_user
 from user import User
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from flask_bcrypt import Bcrypt
 
 app = Flask(__name__)
+app.config.from_pyfile('config.py')
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-app.config['SECRET_KEY'] = 'this_is_a_secret_key'
-app.debug = True
-
 
 db = MongoEngine(app)
 app.session_interface = MongoEngineSessionInterface(db)
@@ -29,6 +26,12 @@ def login():
     pass
     # user = User()
     # user.email = 'gdshen95@gmail.com'
+
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect('/login')
 
 
 @login_manager.user_loader
