@@ -24,7 +24,7 @@ toolbar = DebugToolbarExtension(app)
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    return 'hello, world'
+    return render_template('base.html')
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -41,6 +41,21 @@ def login():
             # flash("Logged in!")
         return redirect('/')
     return render_template('login.html', form=form)
+
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    form = SimpleForm()
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        user_obj = User()
+        user_obj.email = email
+        user_obj.password = password
+        user_obj.save()
+        return redirect('/login')
+    return render_template('register.html', form=form)
 
 
 @app.route('/logout')

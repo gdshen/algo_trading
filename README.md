@@ -28,23 +28,13 @@ After set configuration from this tutorial, just use `net start MongoDB` to star
 
 ## Todo
 
-- [ ] Learn how to use mongoengine & flask-mongoengine to connect to mongodb in flask app
-- [ ] Learn how tu use flask-login to code for user login module
- 
+- [x] Learn how to use mongoengine & flask-mongoengine to connect to mongodb in flask app
+- [x] Learn how tu use flask-login to code for user login module
+- [ ] Optimize user login flow
+- [ ] Add password hash
  
 ## how to make a flask login system
 1. flask_login (User class, user_load methods)
 2. login view
 3. forms
 
-## stage purpose
-a login system
-
-1. without password hash
-2. without register view
-
-only have
-
-1. login
-2. logout
-3. a page that only login user can view

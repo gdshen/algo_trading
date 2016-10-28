@@ -1,6 +1,5 @@
 import models
 from flask_wtf import Form
-from wtforms import PasswordField
 from wtforms import StringField, PasswordField
 from flask_mongoengine.wtf import model_form
 from flask_mongoengine.wtf.orm import validators
