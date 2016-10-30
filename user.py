@@ -1,5 +1,7 @@
-from flask_login import UserMixin
 import logging
+
+from flask_login import UserMixin
+
 import models
 
 
@@ -40,7 +42,6 @@ class User(UserMixin):
             self.email = db_user.email
             self.active = db_user.active
             self.id = db_user.id
-
             return self
         else:
             return None
