@@ -40,8 +40,10 @@ def register():
             password = flask_bcrypt.generate_password_hash(form.password.data)
             user_obj.email = email
             user_obj.password = password
-            user_obj.save()
-            # todo: protect registered email register again
+            user_id = user_obj.save() # user_id will be none if email has already been registered
+            if not user_id:
+                flash('Email has already been registered!')
+                return redirect('/register')
             logging.debug('Register-- {} registered'.format(email))
             return redirect('/login')
         else:

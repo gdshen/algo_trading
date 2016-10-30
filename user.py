@@ -1,6 +1,7 @@
 import logging
 
 from flask_login import UserMixin
+from mongoengine.errors import NotUniqueError
 
 import models
 
@@ -16,8 +17,12 @@ class User(UserMixin):
     def save(self):
         # persist user information to database
         new_user = models.User(email=self.email, password=self.password, active=self.active)
-        new_user.save()
-        logging.debug("register - - new user id = {}".format(new_user.id))
+        try:
+            new_user.save()
+        except NotUniqueError:
+            logging.debug('register - - email <{}>has already been registered'.format(self.email))
+            return None
+        logging.debug('register - - new user id = {}'.format(new_user.id))
         self.id = new_user.id
         return self.id
 
