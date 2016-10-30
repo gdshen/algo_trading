@@ -1,23 +1,29 @@
 {% extends "base.html" %}
+
+{% block head %}
+    <title>Sign up</title>
+    <link href="{{ url_for("static", filename="custom/signin.css") }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-    <h2>Register Page</h2>
-    <form action="" method="POST" name="form">
-        <div class="col-md-4 col-md-offset-4">
+
+    <div class="container">
+        <form action="" method="POST" name="form" class="form-sign">
+            <h2 class="form-sign-heading">Please sign up</h2>
             {{ form.hidden_tag() }}
-            <div class="form-group">
-                <label class="control-label" for="email">email</label>
-                {{ form.email }}
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="password">Password</label>
-                {{ form.password }}
-            </div>
-            <div class="form-group">
-                <label class="control-label" for="confirm">Repeat Password</label>
-                {{ form.confirm }}
-            </div>
-            <button class="btn btn-default" type="submit">Submit</button>
-        </div>
-    </form>
+
+            <label for="email" class="sr-only">Email address</label>
+            {{ form.email(class="form-control", placeholder="Email address", autofocus=true) }}
+
+            <label for="password" class="sr-only">Password</label>
+            {{ form.password(class_="form-control", placeholder="Password") }}
+
+            <label for="confirm" class="sr-only">Confirm</label>
+            {{ form.confirm(class_="form-control", placeholder="Repeat Password") }}
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+            <p>Already has an account?<a href="{{ url_for("auth_flask_login.login") }}">Click here for sign in!</a></p>
+        </form>
+    </div>
 
 {% endblock %}

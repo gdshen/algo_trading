@@ -8,10 +8,11 @@
 {% block content %}
     <div class="container">
 
-        <form action="" method="POST" name="form" class="form-signin">
-            <h2 class="form-signin-heading">Please sign in</h2>
+        <form action="" method="POST" name="form" class="form-sign">
+            <h2 class="form-sign-heading">Please sign in</h2>
+            {{ form.hidden_tag() }}
             <label for="email" class="sr-only">Email address</label>
-            {{ form.email(class_="form-control", placeholder="Email address", autofoucus=true) }}
+            {{ form.email(class_="form-control", placeholder="Email address", autofocus=true) }}
             <label for="password" class="sr-only">Password</label>
             {{ form.password(class_="form-control", placeholder="Password") }}
             <div class="checkbox">
@@ -20,8 +21,8 @@
                 </label>
             </div>
             <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+            <p>New to us? <a href="{{ url_for("auth_flask_login.register") }}">Click here for sign up!</a> </p>
         </form>
 
     </div>
-    {#    <a href="{{ url_for('auth_flask_login.register') }}">Click here to register</a>#}
 {% endblock %}
