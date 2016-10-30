@@ -20,9 +20,10 @@ def login():
         user_obj = User()
         email = form.email.data
         password = form.password.data
+        remember = form.remember.data
         user_obj.get_by_email(email, password_acquirement=True)
         if flask_bcrypt.check_password_hash(user_obj.password, password):
-            login_user(user_obj)
+            login_user(user_obj, remember=remember)
             flash("Logged in!")
         else:
             logging.debug('login-- user {} has input wrong password'.format(email))

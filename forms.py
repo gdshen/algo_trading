@@ -1,6 +1,7 @@
 from flask_mongoengine.wtf import model_form
 from flask_mongoengine.wtf.orm import validators
 from wtforms import PasswordField
+from wtforms import BooleanField
 
 import models
 
@@ -15,3 +16,4 @@ class SignupForm(user_form):
 
 class LoginForm(user_form):
     password = PasswordField('Password', validators=[validators.DataRequired()])
+    remember = BooleanField("Remember Me")

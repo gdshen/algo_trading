@@ -1,21 +1,27 @@
 {% extends "base.html" %}
+
+{% block head %}
+    <title>Sign in</title>
+    <link href="{{ url_for("static", filename="custom/signin.css") }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
-    <h2>Login Page</h2>
+    <div class="container">
 
-    <form action="" method="POST" name="form">
-        <div class="col-md-4 col-md-offset-4">
-            {{ form.hidden_tag() }}
-            <div class="form-group">
-                <label class="control-label" for="email">email</label>
-                {{ form.email }}
+        <form action="" method="POST" name="form" class="form-signin">
+            <h2 class="form-signin-heading">Please sign in</h2>
+            <label for="email" class="sr-only">Email address</label>
+            {{ form.email(class_="form-control", placeholder="Email address", autofoucus=true) }}
+            <label for="password" class="sr-only">Password</label>
+            {{ form.password(class_="form-control", placeholder="Password") }}
+            <div class="checkbox">
+                <label>
+                    {{ form.remember }} Remember Me
+                </label>
             </div>
-            <div class="form-group">
-                <label class="control-label" for="password">Password</label>
-                {{ form.password }}
-            </div>
-            <button class="btn btn-default" type="submit">Submit</button>
-        </div>
-    </form>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
 
-    <a href="{{ url_for('auth_flask_login.register') }}">Click here to register</a>
+    </div>
+    {#    <a href="{{ url_for('auth_flask_login.register') }}">Click here to register</a>#}
 {% endblock %}
