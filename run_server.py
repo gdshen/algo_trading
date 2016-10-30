@@ -1,4 +1,7 @@
 from app import app
+from auth import auth_flask_login
+
+app.register_blueprint(auth_flask_login)
 
 if __name__ == '__main__':
     if app.config['SSL_OR_NOT']:

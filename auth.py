@@ -1,14 +1,16 @@
 import logging
 
-from flask import redirect, request, render_template, flash
+from flask import Blueprint, redirect, request, render_template, flash
 from flask_login import current_user, login_user, logout_user
 
-from app import app, flask_bcrypt, login_manager
+from app import flask_bcrypt, login_manager
 from forms import LoginForm, SignupForm
 from user import User
 
+auth_flask_login = Blueprint('auth_flask_login', __name__, template_folder='templates')
 
-@app.route('/login', methods=['GET', 'POST'])
+
+@auth_flask_login.route('/login', methods=['GET', 'POST'])
 def login():
     if not current_user.is_anonymous:
         flash("You have login before, return to homepage!")
@@ -28,7 +30,7 @@ def login():
     return render_template('login.html', form=form)
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@auth_flask_login.route('/register', methods=['GET', 'POST'])
 def register():
     form = SignupForm(request.form)
     if request.method == 'POST':
@@ -48,9 +50,10 @@ def register():
     return render_template('register.html', form=form)
 
 
-@app.route('/logout')
+@auth_flask_login.route('/logout')
 def logout():
     logout_user()
+    flash('Logged out!')
     return redirect('/login')
 
 
