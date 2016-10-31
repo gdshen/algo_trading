@@ -5,6 +5,7 @@ import logging
 
 import arrow
 import tushare as ts
+import pandas as pd
 from pymongo import MongoClient
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
@@ -21,8 +22,9 @@ def get_and_persist_data(stock, date):
     df = ts.get_tick_data(stock, date, retry_count=5)
     if df.iloc[0, 0] != 'alert("当天没有数据");':
         # df.to_csv('../data/600000/600000_{}.csv'.format(date))
-        df['date'] = date
-        db[stock].insert(json.loads(df.to_json(orient='records')))
+        df['time'] = date + df['time']
+        df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d%H:%M:%S')
+        db[stock].insert_many(df.to_dict(orient='records'))
         logging.debug('{} {} saved'.format(stock, date))
     else:
         logging.debug('{} {} no data'.format(stock, date))
