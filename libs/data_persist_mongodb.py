@@ -1,9 +1,11 @@
 # monitor python process and restart it
 
+import json
+import logging
+
+import arrow
 import tushare as ts
 from pymongo import MongoClient
-import arrow
-import json
 
 stocks = ['600000']
 
@@ -22,9 +24,9 @@ if __name__ == '__main__':
                 # df.to_csv('../data/600000/600000_{}.csv'.format(date))
                 df['date'] = date
                 db[stock].insert(json.loads(df.to_json()))
-                print('{} saved'.format(date))
+                logging.debug('{} {} saved'.format(stock, date))
             else:
-                print('{} no data'.format(date))
+                logging.debug('{} {] no data'.format(stock, date))
 
 # print(ts.get_tick_data('600000', '2016-10-31'))
 # df = ts.get_tick_data('600')
