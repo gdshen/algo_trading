@@ -1,9 +1,14 @@
+import datetime
 import json
 from time import sleep
 
+import arrow
 import pandas as pd
 import redis
 import tushare as ts
+import logging
+
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -25,8 +30,10 @@ def dataframe_convert_type(df):
 
 def persist_to_redis(stock):
     df = ts.get_realtime_quotes(stock)
-    data = json.dumps(df.to_dict(orient='records')[0])
-    r.rpush(stock, data)
+    dict_data = df.to_dict(orient='records')[0]
+    json_data = json.dumps(dict_data)
+    r.rpush(stock, json_data)
+    logging.debug("insert data {}".format(dict_data['time']))
 
 
 def retrieve_from_redis(stock):
@@ -42,8 +49,17 @@ def retrieve_from_redis(stock):
 
 if __name__ == '__main__':
     while True:
-        for stock in stocks:
-            persist_to_redis(stock)
-            sleep(1 / len(stocks))
+        now = arrow.now('Asia/Shanghai').time()
+        morning_open_market_time = datetime.time(9, 30)
+        morning_close_market_time = datetime.time(11, 30)
+
+        afternoon_open_market_time = datetime.time(13, 0)
+        afternoon_close_market_time = datetime.time(15, 0)
+
+        if morning_open_market_time < now < morning_close_market_time \
+                or afternoon_open_market_time < now < afternoon_open_market_time:
+            for stock in stocks:
+                persist_to_redis(stock)
+                sleep(60 / len(stocks))
 
     # df = retrieve_from_redis('600000')

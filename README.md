@@ -75,4 +75,5 @@ def function_name(param1, param2):
 ```
 
 # todo
+security redis server (before it is finally coded)
 separate flask application with algo engine using rpc
