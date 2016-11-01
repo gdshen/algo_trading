@@ -61,5 +61,7 @@ if __name__ == '__main__':
             for stock in stocks:
                 persist_to_redis(stock)
                 sleep(60 / len(stocks))
+        else:
+            sleep(60)
 
     # df = retrieve_from_redis('600000')
