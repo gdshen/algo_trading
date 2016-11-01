@@ -16,6 +16,7 @@ flask
 flask-mongoengine
 flask-bcrypt
 flask-debugtoolbar
+redis
 ```
 
 and create database called `trade` in mysql server.
