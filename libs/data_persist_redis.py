@@ -57,7 +57,7 @@ if __name__ == '__main__':
         afternoon_close_market_time = datetime.time(15, 0)
 
         if morning_open_market_time < now < morning_close_market_time \
-                or afternoon_open_market_time < now < afternoon_open_market_time:
+                or afternoon_open_market_time < now < afternoon_close_market_time:
             for stock in stocks:
                 persist_to_redis(stock)
                 sleep(60 / len(stocks))
