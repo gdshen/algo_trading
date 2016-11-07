@@ -5,10 +5,12 @@ Algorithmic Trading Code Of SJTU Team
 to run data_feed.py, we need
 
 ```
-easyquotation
-tushare
-html5lib
+aiohttp
+requests
 pandas
+tushare
+zerorpc # first pip3 uninstall msgpack-python before install zerorpc
+html5lib
 pymongo
 mongoengine
 arrow
