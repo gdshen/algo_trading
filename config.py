@@ -16,6 +16,6 @@ SSL_OR_NOT = True
 # mongodb database access configuration
 MONGODB_SETTINGS = {
     'db': 'trade',
-    'host': '127.0.0.1',
+    'host': '192.168.1.150',
     'port': 27017
 }

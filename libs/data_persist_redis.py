@@ -10,7 +10,7 @@ import logging
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0)
+r = redis.StrictRedis(host='192.168.1.150', port=6379, db=0)
 
 stocks = ['600000']
 
