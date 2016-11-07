@@ -9,8 +9,10 @@
     {#    <p>Your username is {{ email }}</p>#}
     <h2>Welcome {{ email }}</h2>
 
+{#    todo use form.xxx to refactor form below #}
     <div class="container">
-        <form>
+        <form method="post">
+            {{ form.hidden_tag() }}
             <div class="form-group row">
                 <label for="security" class="col-sm-2 col-form-label">Security</label>
                 <div class="col-sm-10">

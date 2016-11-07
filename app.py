@@ -1,10 +1,12 @@
 import logging
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request, flash
 from flask_bcrypt import Bcrypt
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_required, current_user
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
+
+from forms import OperationForm
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -29,7 +31,15 @@ toolbar = DebugToolbarExtension(app)
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
-    return render_template('home.html', email=current_user.email)
+    form = OperationForm(request.form)
+    if request.method == 'POST':
+        flash("Slicing orders on server")
+        logging.debug(form.security.data)
+        logging.debug(form.shares.data)
+        logging.debug(form.operation.data)
+        logging.debug(form.methods.data)
+
+    return render_template('home.html', email=current_user.email, form=form)
 
 
 
