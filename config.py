@@ -11,7 +11,7 @@ DEBUG_TB_PANELS = ['flask_mongoengine.panels.MongoDebugPanel']
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 # setting https mode or not
-SSL_OR_NOT = True
+SSL_OR_NOT = False
 
 # mongodb database access configuration
 MONGODB_SETTINGS = {
