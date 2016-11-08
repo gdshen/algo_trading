@@ -45,9 +45,10 @@ def home():
         stock = form.security.data
         action = int(form.operation.data)
         volume = int(form.shares.data)
+        method = form.methods.data
 
         algo_trade_engine = zerorpc.Client('tcp://127.0.0.1:4242')
-        rows = algo_trade_engine.slicing_order(user_id, stock, action, volume)
+        rows = algo_trade_engine.slicing_order(user_id, stock, action, volume, method)
 
     return render_template('home.html', email=current_user.email, form=form, rows=rows)
 
