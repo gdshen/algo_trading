@@ -33,6 +33,7 @@ toolbar = DebugToolbarExtension(app)
 @login_required
 def home():
     form = OperationForm(request.form)
+    rows = []
     if request.method == 'POST':
         flash("Slicing orders on server")
         logging.debug(form.security.data)
@@ -46,9 +47,9 @@ def home():
         volume = int(form.shares.data)
 
         algo_trade_engine = zerorpc.Client('tcp://127.0.0.1:4242')
-        algo_trade_engine.slicing_order(user_id, stock, action, volume)
+        rows = algo_trade_engine.slicing_order(user_id, stock, action, volume)
 
-    return render_template('home.html', email=current_user.email, form=form)
+    return render_template('home.html', email=current_user.email, form=form, rows=rows)
 
 
 

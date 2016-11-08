@@ -9,7 +9,7 @@
     {#    <p>Your username is {{ email }}</p>#}
     <h2>Welcome {{ email }}</h2>
 
-{#    todo use form.xxx to refactor form below #}
+    {#    todo use form.xxx to refactor form below #}
     <div class="container">
         <form method="post">
             {{ form.hidden_tag() }}
@@ -72,5 +72,31 @@
                 </div>
             </div>
         </form>
+    </div>
+
+    <div class="container">
+        <h2>Results</h2>
+        <p>Server will execute your order according to the follow table.</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Security</th>
+                <th>Action</th>
+                <th>Volume</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row['stock'] }}</td>
+                    <td>{{ row['action'] }}</td>
+                    <td>{{ row['volume'] }}</td>
+                    <td>{{ row['time'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </div>
 {% endblock %}

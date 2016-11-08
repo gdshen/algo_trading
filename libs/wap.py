@@ -5,11 +5,10 @@ from mongoengine import connect
 
 from models import Order
 
-# data = ts.get_tick_data('600000', '2015-11-10', retry_count=3)
-
 
 class AlgoTradeEngine(object):
     def slicing_order(self, user_id, stock, action, volume):
+        result = []
         today = date.today()
         morning_open_market_time = datetime.combine(today, time(9, 30))
         morning_close_market_time = datetime.combine(today, time(11, 30))
@@ -18,16 +17,22 @@ class AlgoTradeEngine(object):
         afternoon_close_market_time = datetime.combine(today, time(15, 0))
 
         t = morning_open_market_time
+        action_dict = {0: "buy", 1: "sell"}
         while t < morning_close_market_time:
             order = Order(user_id=user_id, stock=stock, action=action, volume=volume / 20, time=t)
+            result.append(
+                {'stock': stock, 'action': action_dict[action], 'volume': volume / 20, 'time': t.strftime("%Y-%m-%d %H;%M:%S")})
             order.save()
             t = t + timedelta(minutes=12)
 
         t = afternoon_open_market_time
         while t < afternoon_close_market_time:
             order = Order(user_id=user_id, stock=stock, action=action, volume=volume / 20, time=t)
+            result.append(
+                {'stock': stock, 'action': action_dict[action], 'volume': volume / 20, 'time': t.strftime("%Y-%m-%d %H;%M:%S")})
             order.save()
             t = t + timedelta(minutes=12)
+        return result
 
 
 if __name__ == '__main__':
