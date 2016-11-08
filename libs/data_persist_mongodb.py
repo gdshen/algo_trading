@@ -31,7 +31,7 @@ def get_and_persist_data(stock, date):
 
 
 if __name__ == '__main__':
-    client = MongoClient('localhost', 27017)
+    client = MongoClient('192.168.1.150', 27017)
     db = client.stocks
 
     presents = arrow.now()

@@ -6,6 +6,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_required, current_user
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 
+import zerorpc
 from forms import OperationForm
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
@@ -38,6 +39,14 @@ def home():
         logging.debug(form.shares.data)
         logging.debug(form.operation.data)
         logging.debug(form.methods.data)
+
+        user_id = str(current_user.get_id())
+        stock = form.security.data
+        action = int(form.operation.data)
+        volume = int(form.shares.data)
+
+        algo_trade_engine = zerorpc.Client('tcp://127.0.0.1:4242')
+        algo_trade_engine.slicing_order(user_id, stock, action, volume)
 
     return render_template('home.html', email=current_user.email, form=form)
 
