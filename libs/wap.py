@@ -134,8 +134,8 @@ class AlgoTradeEngine(object):
 
 if __name__ == '__main__':
     connect('trade', host='192.168.1.150', port=27017)
-    # s = zerorpc.Server(AlgoTradeEngine())
-    # s.bind('tcp://0.0.0.0:4242')
-    # s.run()
-    algo = AlgoTradeEngine()
-    algo.slicing_order_vwap('123', "600000", 0, 10000)
+    s = zerorpc.Server(AlgoTradeEngine())
+    s.bind('tcp://0.0.0.0:4242')
+    s.run()
+    # algo = AlgoTradeEngine()
+    # algo.slicing_order_vwap('123', "600000", 0, 10000)
