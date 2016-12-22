@@ -21,7 +21,7 @@ MONGODB_SETTINGS = {
     'port': 27017
 }
 
-MONGODB_URL = 'mongodb://192.168.1.150:27017'
+MONGODB_URL = 'mongodb://lab.gdshen.me:27017'
 
 STOCK_MORNING_OPEN = "09:30"
 STOCK_MORNING_CLOSE = "11:30"
