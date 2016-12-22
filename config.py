@@ -11,8 +11,8 @@ DEBUG_TB_PANELS = ['flask_mongoengine.panels.MongoDebugPanel']
 DEBUG_TB_INTERCEPT_REDIRECTS = False
 
 # setting https mode or not
-SSL_OR_NOT = True
-#SSL_OR_NOT = False
+# SSL_OR_NOT = True
+SSL_OR_NOT = False
 
 # mongodb database access configuration
 MONGODB_SETTINGS = {
@@ -20,3 +20,10 @@ MONGODB_SETTINGS = {
     'host': '192.168.1.150',
     'port': 27017
 }
+
+MONGODB_URL = 'mongodb://192.168.1.150:27017'
+
+STOCK_MORNING_OPEN = "09:30"
+STOCK_MORNING_CLOSE = "11:30"
+STOCK_AFTERNOON_OPEN = "13:00"
+STOCK_AFTERNOON_CLOSE = "15:00"

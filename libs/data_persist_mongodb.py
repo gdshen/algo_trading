@@ -1,13 +1,14 @@
 # monitor python process and restart it
 
 import logging
+from datetime import datetime
 
 import arrow
-import tushare as ts
 import pandas as pd
+import tushare as ts
 from pymongo import MongoClient
-import datetime
-import pymongo
+
+from config import MONGODB_URL, STOCK_MORNING_OPEN, STOCK_MORNING_CLOSE, STOCK_AFTERNOON_OPEN, STOCK_AFTERNOON_CLOSE
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 stocks = ['600000']
@@ -22,7 +23,7 @@ def is_holiday(date):
 
     df = pd.read_csv('./calAll.csv')
     holiday = df[df.isOpen == 0]['calendarDate'].values
-    today = datetime.datetime.strptime(date, "%Y-%m-%d")
+    today = datetime.strptime(date, "%Y-%m-%d")
 
     if today.isoweekday() in [6, 7] or '{dt.year}/{dt.month}/{dt.day}'.format(dt=today) in holiday:
         return True
@@ -38,6 +39,7 @@ def get_and_persist_data(stock, date):
     :return: status of execution: bool -> True/False
     """
 
+    client = MongoClient(MONGODB_URL)
     if is_holiday(date):
         logging.debug('{} is holiday'.format(date))
         return False
@@ -57,53 +59,93 @@ def get_and_persist_data(stock, date):
         return False
 
 
-def read_from_db(name, days):
-    """
-    :param name: name of stocks
-    :param days: how many days of data u want get from db
-    :return: return pandas dataframe
+def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_start=None, afternoon_end=None):
+    """read stock history data from database and return a pandas dataframe
+
+
+    关于使用时间段的说明：
+        1. 默认不传时间段参数的情况下：将获取全天的所有数据
+        2. 两个时间段（四个时间点）都指定：获取对应两个时间段的数据
+        3. 只使用一个时间段：需要给另外的一个时间段的两个时间点传递字符串参数”NOT_USE"
+        4. 其他情况下：如果不指定某个时间参数，则该时间参数取值为对应的开市和闭式值。
+
+    :param stock: string -> a stock id, like "600000"
+    :param day: string -> which day, format 'YYYY-MM-DD", like "2016-01-03"
+    :param morning_start: string -> the start of time interval of the morning, format "HH:MM", like "10:30"
+    :param morning_end: string -> the end of time interval of the morning, format "HH:MM", like "11:00"
+    :param afternoon_start: string -> format "HH:MM"
+    :param afternoon_end: string -> format "HH:MM"
+    :return: pandas.Dataframe: the data in Dataframe type, if the day is not trade day for that stock, return None
     """
 
-    # todo set time interval
-    client = pymongo.MongoClient("192.168.1.150", 27017)
-    database = client.stocks
-    stock_name = database[name]
-    # tmp = stock_name.find_one()  # read newest record to get the time
-    time = datetime.datetime.now()
+    client = MongoClient(MONGODB_URL)
+    db = client[stock]
 
-    i = 0
-    result = pd.DataFrame(columns=['volume', 'type', 'change', 'amount', 'price', 'time'])
-    while (i < days):
-        pasttime = time - datetime.timedelta(days=i)
-        # print(pasttime)
-        if (stock_name.find_one({"time": {
-            "$lt": datetime.datetime(pasttime.year, pasttime.month, pasttime.day, 18, 0, 0),
-            "$gte": datetime.datetime(pasttime.year, pasttime.month, pasttime.day, 6, 0, 0)}})):
-            day_records = stock_name.find({"time": {
-                "$lt": datetime.datetime(pasttime.year, pasttime.month, pasttime.day, 18, 0, 0),
-                "$gte": datetime.datetime(pasttime.year, pasttime.month, pasttime.day, 6, 0, 0)}})
-            index = 0
-            for record in day_records:
-                result.loc[index] = [record['volume'], record['type'], record['change'], record['amount'],
-                                     record['price'], record['time']]
-                index += 1
-            i += 1
-        else:
-            days += 1
-            i += 1
-    return result
+    trade_days = db.collection_names()
+    if not (day in trade_days):
+        return None
+    collection = db[day]
+
+    # to simplify the none time interval selection
+    if morning_start is None and morning_end is None and afternoon_start is None and afternoon_end is None:
+        data = list(collection.find())
+        return pd.DataFrame.from_dict(data)
+
+    # below is the set time interval version
+
+    # handle the not use case
+    if morning_start == "NOT_USE" or morning_end == "NOT_USE":
+        morning_start, morning_end = "00:00", "00:00"
+    if afternoon_start == "NOT_USE" or morning_end == "NOT_USE":
+        afternoon_start, morning_end = "23:59", "23:59"
+
+    # parse time to proper type
+    datetime_format = '%Y-%m-%d%H:%M'
+    if morning_start is None:
+        morning_start = datetime.strptime(day + STOCK_MORNING_OPEN, datetime_format)
+    else:
+        morning_start = datetime.strptime(day + morning_start, datetime_format)
+
+    if morning_end is None:
+        morning_end = datetime.strptime(day + STOCK_MORNING_CLOSE, datetime_format)
+    else:
+        morning_end = datetime.strptime(day + morning_end, datetime_format)
+
+    if afternoon_start is None:
+        afternoon_start = datetime.strptime(day + STOCK_AFTERNOON_OPEN, datetime_format)
+    else:
+        afternoon_start = datetime.strptime(day + afternoon_start, datetime_format)
+
+    if afternoon_end is None:
+        afternoon_end = datetime.strptime(day + STOCK_AFTERNOON_CLOSE, datetime_format)
+    else:
+        afternoon_end = datetime.strptime(day + afternoon_end, datetime_format)
+
+    data = list(collection.find(
+        {
+            # "$or: [{x: {$lte: 10}}, {x: {$gte: 20, $lte: 25}}, {x: {$gte: 30}}],
+
+            "$or": [
+                {"time": {"$gte": morning_start, "$lte": morning_end}},
+                {"time": {"$gte": afternoon_start, "$lte": afternoon_end}}
+            ]
+        }
+    ))
+    return pd.DataFrame.from_dict(data)
 
 
 if __name__ == '__main__':
-    client = MongoClient('lab.gdshen.me', 27017)
-
+    # read_from_db('600000', '2016-12-21')
     presents = arrow.now()
-    a_year_before = arrow.now().replace(years=-1)
+    a_year_before = arrow.now().replace(days=-30)
 
     for stock in stocks:
         for r in arrow.Arrow.range('day', a_year_before, presents):
             date = r.format('YYYY-MM-DD')
-            get_and_persist_data(stock, date)
+            # read_from_db('600000', date)
+            read_from_db('600000', date, 'NOT_USE', 'NOT_USE', '13:30', "14:30")
+            #         get_and_persist_data(stock, date)
+
 
 # print(ts.get_tick_data('600000', '2016-10-31'))
 # df = ts.get_tick_data('600')
