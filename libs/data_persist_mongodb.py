@@ -105,7 +105,7 @@ def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_sta
     if morning_start == "NOT_USE" or morning_end == "NOT_USE":
         morning_start, morning_end = "00:00", "00:00"
     if afternoon_start == "NOT_USE" or morning_end == "NOT_USE":
-        afternoon_start, morning_end = "23:59", "23:59"
+        afternoon_start, afternoon_end = "23:59", "23:59"
 
     # parse time to proper type
     datetime_format = '%Y-%m-%d%H:%M'
