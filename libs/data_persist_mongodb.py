@@ -7,11 +7,13 @@ import arrow
 import pandas as pd
 import tushare as ts
 from pymongo import MongoClient
+from pymongo.errors import BulkWriteError
 
 from config import MONGODB_URL, MARKET_MORNING_OPEN, MARKET_MORNING_CLOSE, MARKET_AFTERNOON_OPEN, MARKET_AFTERNOON_CLOSE
+from cons import stocks_list
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
-stocks = ['600000']
+logging.basicConfig(filename='database.log', format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
+stocks = list(stocks_list.keys())
 
 
 def is_holiday(date):
@@ -51,9 +53,15 @@ def get_and_persist_data(stock, date):
     if df.iloc[0, 0] != 'alert("当天没有数据");':
         df['time'] = date + df['time']
         df['time'] = pd.to_datetime(df['time'], format='%Y-%m-%d%H:%M:%S')
-        db[date].insert_many(df.to_dict(orient='records'))
-        logging.debug('{} {} saved'.format(stock, date))
-        return True
+        df = df.sort_index(axis=0, ascending=False)
+        try:
+            db[date].insert_many(df.to_dict(orient='records'))
+            logging.debug('{} {} saved'.format(stock, date))
+            return True
+        except BulkWriteError as bwe:
+            logging.error(bwe.details)
+            logging.error('{} {} save error'.format(stock, date))
+            return False
     else:
         logging.debug('{} {} no data, stock is in suspension.'.format(stock, date))
         return False
@@ -136,16 +144,20 @@ def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_sta
 
 if __name__ == '__main__':
     # read_from_db('600000', '2016-12-21')
-    presents = arrow.now()
-    a_year_before = arrow.now().replace(days=-30)
 
+    presents = arrow.now()
+    a_year_before = arrow.now().replace(years=-1)
+    #
     for stock in stocks:
         for r in arrow.Arrow.range('day', a_year_before, presents):
             date = r.format('YYYY-MM-DD')
-            # read_from_db('600000', date)
-            read_from_db('600000', date, 'NOT_USE', 'NOT_USE', '13:30', "14:30")
-            #         get_and_persist_data(stock, date)
+            #     read_from_db('600000', date)
+            #     read_from_db('600000', date, 'NOT_USE', 'NOT_USE', '13:30', "14:30")
+            get_and_persist_data(stock, date)
+            # sleep(1)
+            #
+            # get_and_persist_data('601398', '2016-08-15')
 
-
+            # get_and_persist_data('601766', '2016-03-04')
 # print(ts.get_tick_data('600000', '2016-10-31'))
 # df = ts.get_tick_data('600')
