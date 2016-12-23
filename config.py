@@ -17,11 +17,11 @@ SSL_OR_NOT = False
 # mongodb database access configuration
 MONGODB_SETTINGS = {
     'db': 'trade',
-    'host': 'localhost',
+    'host': '192.168.1.150',
     'port': 27017
 }
 
-MONGODB_URL = 'mongodb://localhost:27017'
+MONGODB_URL = 'mongodb://192.168.1.150:27017'
 
 MARKET_MORNING_OPEN = "09:30"
 MARKET_MORNING_CLOSE = "11:30"

@@ -79,3 +79,24 @@ def function_name(param1, param2):
 # todo
 security redis server (before it is finally coded)
 separate flask application with algo engine using rpc
+
+
+# data structure of predicted vwap
+predicted_vwap: dict
+
+example:
+{
+    'stock': '60000',
+    'day': '2016-12-23',
+    'morning_start': '09:30:00',
+    'morning_end': '11:30:00'
+    'afternoon_start': 'NOT_USE'
+    'afternoon_end': 'NOT_USE'
+    'policy': [("09:45:00", 1000),
+               ("09:55:00", 2000),
+               ("10:20:00", 1500),
+               ("10:50:00", 2000),
+               ("11:25:00", 3000),
+               ...
+              ]
+}
