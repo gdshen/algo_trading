@@ -2,7 +2,6 @@ from datetime import date, time, datetime, timedelta
 
 import zerorpc
 from mongoengine import connect
-import pymongo
 
 from models import Order
 import libs.data_persist_mongodb as it
