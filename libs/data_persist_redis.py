@@ -12,7 +12,17 @@ logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=loggin
 
 r = redis.StrictRedis(host='192.168.1.150', port=6379, db=0)
 
-stocks = ['600000']
+stocks = ['600000',
+          '601211',
+          '601398',
+          '601766',
+          '600030',
+          '600887',
+          '601390',
+          '601988',
+          '600104',
+          '600489',
+          '601117']
 
 
 def dataframe_convert_type(df):
@@ -60,8 +70,8 @@ if __name__ == '__main__':
                 or afternoon_open_market_time < now < afternoon_close_market_time:
             for stock in stocks:
                 persist_to_redis(stock)
-                sleep(60 / len(stocks))
+                sleep(6 / len(stocks))
         else:
-            sleep(60)
+            sleep(6)
 
-    # df = retrieve_from_redis('600000')
+            # df = retrieve_from_redis('600000')
