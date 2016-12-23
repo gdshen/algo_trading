@@ -8,7 +8,7 @@ import pandas as pd
 import tushare as ts
 from pymongo import MongoClient
 
-from config import MONGODB_URL, STOCK_MORNING_OPEN, STOCK_MORNING_CLOSE, STOCK_AFTERNOON_OPEN, STOCK_AFTERNOON_CLOSE
+from config import MONGODB_URL, MARKET_MORNING_OPEN, MARKET_MORNING_CLOSE, MARKET_AFTERNOON_OPEN, MARKET_AFTERNOON_CLOSE
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 stocks = ['600000']
@@ -102,22 +102,22 @@ def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_sta
     # parse time to proper type
     datetime_format = '%Y-%m-%d%H:%M'
     if morning_start is None:
-        morning_start = datetime.strptime(day + STOCK_MORNING_OPEN, datetime_format)
+        morning_start = datetime.strptime(day + MARKET_MORNING_OPEN, datetime_format)
     else:
         morning_start = datetime.strptime(day + morning_start, datetime_format)
 
     if morning_end is None:
-        morning_end = datetime.strptime(day + STOCK_MORNING_CLOSE, datetime_format)
+        morning_end = datetime.strptime(day + MARKET_MORNING_CLOSE, datetime_format)
     else:
         morning_end = datetime.strptime(day + morning_end, datetime_format)
 
     if afternoon_start is None:
-        afternoon_start = datetime.strptime(day + STOCK_AFTERNOON_OPEN, datetime_format)
+        afternoon_start = datetime.strptime(day + MARKET_AFTERNOON_OPEN, datetime_format)
     else:
         afternoon_start = datetime.strptime(day + afternoon_start, datetime_format)
 
     if afternoon_end is None:
-        afternoon_end = datetime.strptime(day + STOCK_AFTERNOON_CLOSE, datetime_format)
+        afternoon_end = datetime.strptime(day + MARKET_AFTERNOON_CLOSE, datetime_format)
     else:
         afternoon_end = datetime.strptime(day + afternoon_end, datetime_format)
 
