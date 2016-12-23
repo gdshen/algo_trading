@@ -32,15 +32,17 @@ def backtest():
     actual_vwap = sum(data_of_today['amount']) / sum(data_of_today['volume']) / 100
     __policy = __predicted_vwap['policy']
 
-    datetime_format = '%Y-%m-%d %H:%M:%S'
+    datetime_format = '%Y-%m-%d%H:%M:%S'
     amount = 0.0
     volume = 0
     for i in __policy:
         volume += i[1]
-        start = datetime.datetime.strftime(__predicted_vwap['day'] + i[0], datetime_format)
+        start = datetime.datetime.strptime(__predicted_vwap['day'] + i[0], datetime_format)
         end = start + datetime.timedelta(minutes=1)
         amount += i[1] * data_of_today['price'][(data_of_today['time'] > start) & (data_of_today['time'] < end)].iloc[0]
 
     predicted_vwap = amount / volume
     result['actual_vwap'] = actual_vwap
     result['predicted_vwap'] = predicted_vwap
+
+    return result
