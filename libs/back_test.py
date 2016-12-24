@@ -64,7 +64,5 @@ def backtest():
 
 
     plot_data = result.set_index('time')
-    pic = plot_data.cumsum()
-    pic.plot()
-    plt.legend(loc='best')
-    return result
+    plot_data.plot()
+    return plot_data
