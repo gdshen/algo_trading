@@ -1,11 +1,8 @@
 import libs.data_persist_mongodb as it
 import pandas as pd
 import datetime
-import matplotlib.pyplot as plt
 
 def backtest():
-    #result = list()
-
     __predicted_vwap = dict()
     __predicted_vwap['stock'] = "600000"
     __predicted_vwap['day'] = "2016-12-22"
@@ -30,24 +27,7 @@ def backtest():
     #                                 predicted_vwap['morning_start'], predicted_vwap['morning_end'],
     #                                 predicted_vwap['afternoon_start'], predicted_vwap['afternoon_stop'])
 
-
-    # actual_vwap = sum(data_of_today['amount']) / sum(data_of_today['volume']) / 100
-    # __policy = __predicted_vwap['policy']
-    #
-    # datetime_format = '%Y-%m-%d%H:%M:%S'
-    # amount = 0.0
-    # volume = 0
-    # for i in __policy:
-    #     volume += i[1]
-    #     start = datetime.datetime.strptime(__predicted_vwap['day'] + i[0], datetime_format)
-    #     end = start + datetime.timedelta(minutes=1)
-    #     amount += i[1] * data_of_today['price'][(data_of_today['time'] > start) & (data_of_today['time'] < end)].iloc[0]
-    #
-    # predicted_vwap = amount / volume
-    # result['actual_vwap'] = actual_vwap
-    # result['predicted_vwap'] = predicted_vwap
-
-    columns = ['time','actual_vwap','predicted_vwap']
+    columns = ['time', 'actual_vwap', 'predicted_vwap']
     result = pd.DataFrame(columns=columns)
     __policy = __predicted_vwap['policy']
     __policy.append(("09:30:00", 0))
@@ -56,12 +36,13 @@ def backtest():
         start = datetime.datetime.strptime(__predicted_vwap['day'] + __policy[index - 1][0], datetime_format)
         end = datetime.datetime.strptime(__predicted_vwap['day'] + __policy[index][0], datetime_format)
 
-        actual_vwap_data = data_of_today[['amount', 'volume']][(data_of_today['time'] > start) & (data_of_today['time'] < end)]
+        actual_vwap_data = data_of_today[['amount', 'volume']][
+            (data_of_today['time'] > start) & (data_of_today['time'] < end)]
         actual_vwap = sum(actual_vwap_data['amount']) / sum(actual_vwap_data['volume']) / 100
-        predicted_vwap = data_of_today['price'][(data_of_today['time'] > end) & (data_of_today['time'] < end + datetime.timedelta(minutes=1))].iloc[0]
+        predicted_vwap = data_of_today['price'][
+            (data_of_today['time'] > end) & (data_of_today['time'] < end + datetime.timedelta(minutes=1))].iloc[0]
 
-        result.loc[index] = [__policy[index - 1][0] +" - "+__policy[index][0], actual_vwap, predicted_vwap]
-
+        result.loc[index] = [__policy[index - 1][0] + " - " + __policy[index][0], actual_vwap, predicted_vwap]
 
     plot_data = result.set_index('time')
     plot_data.plot()
