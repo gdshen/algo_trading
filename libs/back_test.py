@@ -1,6 +1,7 @@
 import libs.data_persist_mongodb as it
 import pandas as pd
 import datetime
+import matplotlib.pyplot as plt
 
 def backtest():
     #result = list()
@@ -46,17 +47,24 @@ def backtest():
     # result['actual_vwap'] = actual_vwap
     # result['predicted_vwap'] = predicted_vwap
 
-    columns = ['actual_vwap','predicted_vwap']
+    columns = ['time','actual_vwap','predicted_vwap']
     result = pd.DataFrame(columns=columns)
     __policy = __predicted_vwap['policy']
+    __policy.append(("09:30:00", 0))
     datetime_format = '%Y-%m-%d%H:%M:%S'
     for index in range(len(__policy) - 1):
-        start = datetime.datetime.strptime(__predicted_vwap['day'] + __policy[index][0], datetime_format)
-        end = datetime.datetime.strptime(__predicted_vwap['day'] + __policy[index + 1][0], datetime_format)
+        start = datetime.datetime.strptime(__predicted_vwap['day'] + __policy[index - 1][0], datetime_format)
+        end = datetime.datetime.strptime(__predicted_vwap['day'] + __policy[index][0], datetime_format)
 
         actual_vwap_data = data_of_today[['amount', 'volume']][(data_of_today['time'] > start) & (data_of_today['time'] < end)]
         actual_vwap = sum(actual_vwap_data['amount']) / sum(actual_vwap_data['volume']) / 100
-        predicted_vwap = data_of_today['price'][(data_of_today['time'] > start) & (data_of_today['time'] < start + datetime.timedelta(minutes=1))].iloc[0]
+        predicted_vwap = data_of_today['price'][(data_of_today['time'] > end) & (data_of_today['time'] < end + datetime.timedelta(minutes=1))].iloc[0]
 
-        result.loc[index] = [actual_vwap, predicted_vwap]
+        result.loc[index] = [__policy[index - 1][0] +" - "+__policy[index][0], actual_vwap, predicted_vwap]
+
+
+    plot_data = result.set_index('time')
+    pic = plot_data.cumsum()
+    pic.plot()
+    plt.legend(loc='best')
     return result
