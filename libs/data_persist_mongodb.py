@@ -12,7 +12,7 @@ from pymongo.errors import BulkWriteError
 from config import MONGODB_URL, MARKET_MORNING_OPEN, MARKET_MORNING_CLOSE, MARKET_AFTERNOON_OPEN, MARKET_AFTERNOON_CLOSE
 from cons import stocks_list
 
-logging.basicConfig(filename='C:\database.log', format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(filename='D:\database.log', format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 stocks = list(stocks_list.keys())
 
 

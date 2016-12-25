@@ -90,7 +90,7 @@ if __name__ == '__main__':
     pprint(l)
     l = seven_day_mean.vwap('09:30', '10:30')
     pprint(l)
-    df = seven_day_mean.score('09:30', '10:30')
+    # df = seven_day_mean.score('09:30', '10:30')
     # pprint(df)
 
     # df = read_from_db('600000', '2016-12-22')
