@@ -12,7 +12,7 @@ def backtest():
     __predicted_wap['morning_end'] = "11:30"
     __predicted_wap['afternoon_start'] = "13:00"
     __predicted_wap['afternoon_end'] = "15:00"
-    __predicted_wap['wap'] = 'vwap'
+    __predicted_wap['wap'] = 'twap'
 
     policy = list()
     policy.append((("09:40:00", "09:50:00"), ("09:45:00", 1000)))
@@ -33,27 +33,35 @@ def backtest():
     result = pd.DataFrame(columns=columns)
     __policy = __predicted_wap['policy']
     datetime_format = '%Y-%m-%d%H:%M:%S'
-    volume = 0
-    amount = 0.0
+    vwap_volume = 0
+    vwap_amount = 0.0
+    twap_price = 0.0
     for index in range(len(__policy)):
         start = datetime.datetime.strptime(__predicted_wap['day'] + __policy[index][0][0], datetime_format)
         end = datetime.datetime.strptime(__predicted_wap['day'] + __policy[index][0][1], datetime_format)
         order_point = datetime.datetime.strptime(__predicted_wap['day'] + __policy[index][1][0], datetime_format)
 
-        actual_vwap_data = data_of_today[['amount', 'volume']][
-            (data_of_today['time'] > start) & (data_of_today['time'] < end)]
-        actual_vwap = sum(actual_vwap_data['amount']) / sum(actual_vwap_data['volume']) / 100
+        if __predicted_wap['wap'] == "vwap":
+            actual_vwap_data = data_of_today[['amount', 'volume']][(data_of_today['time'] > start) & (data_of_today['time'] < end)]
+            actual_vwap = sum(actual_vwap_data['amount']) / sum(actual_vwap_data['volume']) / 100
+        else:
+            actual_vwap_data = data_of_today['price'][(data_of_today['time'] > start) & (data_of_today['time'] < end)]
+            actual_vwap = sum(actual_vwap_data) / len(actual_vwap_data)
+
         predicted_vwap = data_of_today['price'][
             (data_of_today['time'] < order_point) & (
             data_of_today['time'] > order_point + datetime.timedelta(minutes=-1))].iloc[0]
 
-        volume += __policy[index][1][1]
-        amount += __policy[index][1][1] * predicted_vwap
+        vwap_volume += __policy[index][1][1]
+        vwap_amount += __policy[index][1][1] * predicted_vwap
+        twap_price += predicted_vwap
 
         result.loc[index] = [__policy[index][0][0] + " - " + __policy[index][0][1], actual_vwap, predicted_vwap]
 
-    result.loc[len(__policy)] = ["All Day", sum(data_of_today['amount']) / sum(data_of_today['volume']) / 100,
-                                 amount / volume]
+    if __predicted_wap['wap'] == "vwap":
+        result.loc[len(__policy)] = ["All Day", sum(data_of_today['amount']) / sum(data_of_today['volume']) / 100, vwap_amount / vwap_volume]
+    else:
+        result.loc[len(__policy)] = ["All Day", sum(data_of_today['price']) / len(data_of_today['price']), twap_price / len(__policy)]
 
     plot_data = result.set_index('time')
     ylim_min = min(min(plot_data['actual']), min(plot_data['predicted'])) - 0.1
