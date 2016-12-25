@@ -4,6 +4,7 @@ import arrow
 import numpy as np
 
 from libs.data_persist_mongodb import read_from_db
+from libs.back_test import backtest
 
 
 class NDayMean:
@@ -65,9 +66,23 @@ class NDayMean:
             l.append(((start, end), (random_time, self.time_interval_mean(start, end))))
         return l
 
+    def score(self, start_time, end_time):
+        policy = {
+            'stock': self.stock,
+            'day': self.date,
+            'morning_start': start_time,
+            'morning_end': end_time,
+            'afternoon_start': 'NOT_USE',
+            'afternoon_end': 'NOT_USE',
+            'policy': list()
+        }
+        l = self.vwap(start_time, end_time)
+        for ((_, _), (random_time, amount)) in l:
+            policy['policy'].append((random_time, amount))
+        return backtest(policy)
+
 
 if __name__ == '__main__':
-    # seven_day_mean = NDayMeano'600000', '2016-12-22', 7).mean()
     seven_day_mean = NDayMean('600000', '2016-12-21', 15)
     l = seven_day_mean.time_interval_mean('09:30', '09:31')
     print(l)
@@ -75,3 +90,8 @@ if __name__ == '__main__':
     pprint(l)
     l = seven_day_mean.vwap('09:30', '10:30')
     pprint(l)
+    df = seven_day_mean.score('09:30', '10:30')
+    # pprint(df)
+
+    # df = read_from_db('600000', '2016-12-22')
+    # print(df['2016-12-22 09:30:00' : '2016-12-22 09:40:00'])

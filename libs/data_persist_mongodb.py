@@ -12,7 +12,7 @@ from pymongo.errors import BulkWriteError
 from config import MONGODB_URL, MARKET_MORNING_OPEN, MARKET_MORNING_CLOSE, MARKET_AFTERNOON_OPEN, MARKET_AFTERNOON_CLOSE
 from cons import stocks_list
 
-logging.basicConfig(filename='database.log', format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(filename='C:\database.log', format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 stocks = list(stocks_list.keys())
 
 
@@ -97,7 +97,7 @@ def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_sta
     # to simplify the none time interval selection
     if morning_start is None and morning_end is None and afternoon_start is None and afternoon_end is None:
         data = list(collection.find())
-        return pd.DataFrame.from_dict(data)
+        return pd.DataFrame.from_dict(data).set_index('time', drop=False).sort_index()
 
     # below is the set time interval version
 
@@ -139,7 +139,7 @@ def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_sta
             ]
         }
     ))
-    return pd.DataFrame.from_dict(data)
+    return pd.DataFrame.from_dict(data).set_index('time', drop=False).sort_index()
 
 
 if __name__ == '__main__':
