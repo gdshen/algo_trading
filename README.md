@@ -85,6 +85,7 @@ separate flask application with algo engine using rpc
 predicted_vwap: dict
 
 example:
+```
 {
     'stock': '60000',
     'day': '2016-12-23',
@@ -100,3 +101,4 @@ example:
                ...
               ]
 }
+```
