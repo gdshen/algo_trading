@@ -4,7 +4,7 @@ from sklearn.decomposition import PCA
 from sklearn import metrics
 from sklearn.feature_selection import RFECV, SelectKBest, f_regression
 import matplotlib.pyplot as plt
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import StratifiedKFold, StratifiedShuffleSplit
 import pandas as pd
 from sklearn import linear_model, pipeline
 import numpy as np
@@ -28,13 +28,13 @@ def getParameters(trainData, trainLabel, parameterSet, score):
     return clf.best_params_
 
 def predict_Min(stockCode):
-    df = pd.read_csv('./data/%sTrainingDataMin.csv' % stockCode)
+    df = pd.read_csv('./data/%s/%sTrainingDataMin.csv' % (stockCode, stockCode))
     Y = df.loc[696 : , 'volume']
     X = df.iloc[696 :, 1 : 11]
     X = preprocessing.scale(X)
     clf = pipeline.make_pipeline(preprocessing.PolynomialFeatures(2), linear_model.LinearRegression())
     clf.fit(X, Y)
-    joblib.dump(clf, './model/%sMinVolume' % stockCode)
+    joblib.dump(clf, './model/%sVolume_Min' % stockCode)
 
     '''
     #random
@@ -76,14 +76,14 @@ def predict_Min(stockCode):
     '''
 
 def predict_Day(stockCode):
-    df = pd.read_csv('./data/%sTrainingDataDay.csv' % stockCode)
+    df = pd.read_csv('./data/%s/%sTrainingDataDay.csv' % (stockCode, stockCode))
     Y = df.loc[1624 : , 'volume']
     X = df.iloc[1624 :, 1 : 10]
     X = preprocessing.scale(X)
     X = SelectKBest(f_regression, k = 8).fit_transform(X, Y)
     clf = RandomForestRegressor(random_state = 0, n_estimators = 1500)
     clf.fit(X, Y)
-    joblib.dump(clf, './model/%sDayVolume' % stockCode)
+    joblib.dump(clf, './model/%sVolume_Day' % stockCode)
 
     '''
     #random
@@ -128,7 +128,7 @@ def predict_Day(stockCode):
     '''
 
 def predictChange_Day(stockCode):
-    df = pd.read_csv('./data/%sRiseFallDataDay.csv' % stockCode)
+    df = pd.read_csv('./data/%s/%sRiseFallDataDay.csv' % (stockCode, stockCode))
     l = len(df)
     Y = df.loc[5 : l - 2, 'label']
     X = df.iloc[5 : l - 1, 1 : 61]
@@ -139,7 +139,7 @@ def predictChange_Day(stockCode):
              'C' : [128, 256, 512, 1024]}]
     dimension = 12
     if stockCode == '601398':
-        dimension = 24
+        dimension = 25
     elif stockCode == '601988':
         dimension = 11
 
@@ -151,7 +151,7 @@ def predictChange_Day(stockCode):
     kernel = parameter['kernel']
     clf = getModel(newX, Y, C, gamma, kernel)
     clf.fit(newX, Y)
-    joblib.dump(clf, './model/%sDayChange' % stockCode)
+    joblib.dump(clf, './model/%sChange_Day' % stockCode)
 
     '''
     trainX, testX, trainY, testY = train_test_split(X, Y, test_size = 0.2)
@@ -202,7 +202,7 @@ def predictChange_Day(stockCode):
     '''
 
 def predictChange_Min(stockCode):
-    df = pd.read_csv('./data/%sRiseFallDataMin.csv' % stockCode)
+    df = pd.read_csv('./data/%s/%sRiseFallDataMin.csv' % (stockCode, stockCode))
     l = len(df)
     Y = df.loc[3 : l - 2, 'label']
     X = df.iloc[3 : l - 1, 1 : 19]
@@ -217,7 +217,7 @@ def predictChange_Min(stockCode):
     eclf = VotingClassifier(estimators = [('dt', clf1), ('kn', clf2), ('svc', clf3), ('ab', clf4), ('gnb', clf5)], voting = 'hard')
     #eclf.fit(trainX, trainY)
     eclf.fit(X, Y)
-    joblib.dump(eclf, './model/%sMinChange' % stockCode)
+    joblib.dump(eclf, './model/%sChange_Min' % stockCode)
     '''
     predictY = eclf.predict(testX)
     accuracy = metrics.accuracy_score(testY, predictY)

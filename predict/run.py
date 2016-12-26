@@ -1,27 +1,34 @@
-#import getData
+import getData
 import trainingModel
+import sys
 from sklearn.externals import joblib
 
-def main():
-    #stockCodeList = ['601211', '601398', '601766', '600030', '600887', '601390', '601988', '600104', '600489', '601117']
-    stockCodeList = ['601398', '601988']
-    for stockCode in stockCodeList:
-        #getData.getTickData(stockCode)
-        #getData.dataClean(stockCode)
+def main(argv):
+    for arg in argv:
+        if arg == 'data':
+            stockCodeList = ['601211', '601398', '601766', '600030', '600887', '601390', '601988', '600104', '600489', '601117']
+            for stockCode in stockCodeList:
+                getData.getTickData(stockCode)
+                getData.dataClean(stockCode)
 
-        #getData.getTrainingData_Min(stockCode)
-        trainingModel.predict_Min(stockCode)
+                getData.getVolumeData_Min(stockCode)
 
-        #getData.getTrainingData_Day(stockCode)
-        trainingModel.predict_Day(stockCode)
+                getData.getVolumeData_Day(stockCode)
 
-        #getData.getMarketData_Day(stockCode)
-        #getData.getRiseFallData_Day(stockCode)
-        trainingModel.predictChange_Day(stockCode)
+                getData.getMarketAndStockData_Day(stockCode)
+                getData.getChangeData_Day(stockCode)
 
-        #getData.getRiseFallData_Min(stockCode)
-        trainingModel.predictChange_Min(stockCode)
-        print('%s done!' % stockCode)
+                getData.getChangeData_Min(stockCode)
+                print('%s done!' % stockCode)
+
+        elif arg == 'model':
+            stockCodeList = ['601398', '601988']
+            for stockCode in stockCodeList:
+                trainingModel.predict_Min(stockCode)
+                trainingModel.predict_Day(stockCode)
+                trainingModel.predictChange_Day(stockCode)
+                trainingModel.predictChange_Min(stockCode)
+                print('%s done!' % stockCode)
 
     '''
     #read model
@@ -31,4 +38,4 @@ def main():
     '''
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv)

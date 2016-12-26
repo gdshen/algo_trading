@@ -2,7 +2,6 @@ import tushare as ts
 from datetime import *
 import pandas as pd
 import time
-import numpy as np
 
 def getTickData(stockCode, interval=365):
     now = date.today()
@@ -17,11 +16,11 @@ def getTickData(stockCode, interval=365):
             df = pd.concat([df, tickInfo], axis=0)
     ind = list(range(len(df)))
     df.index = ind
-    df.to_csv("./data/%s_tick_data.csv" % stockCode, encoding="gb2312")
+    df.to_csv("./data/%s/%s_tick_data.csv" % (stockCode, stockCode), encoding="gb2312")
 
 
 def dataClean(stockCode):
-    tickDataDF = pd.read_csv("./data/%s_tick_data.csv" % stockCode, encoding='gb2312')
+    tickDataDF = pd.read_csv("./data/%s/%s_tick_data.csv" % (stockCode, stockCode), encoding='gb2312')
     df = pd.DataFrame(columns=('date', 'time', 'open', 'close', 'low', 'high', 'volume'))
     l = len(tickDataDF)
     date = tickDataDF.ix[0]['date']
@@ -38,7 +37,6 @@ def dataClean(stockCode):
             if curMin != t.tm_min:
                 df.loc[len(df)] = [tickDataDF.ix[i - 1]['date'], tickDataDF.ix[i - 1]['time'], open, tickDataDF.ix[i - 1]['price'],\
                                    low, high, volume]
-                print(df.loc[len(df) - 1])
                 boughtAmount = 0
                 soldAmount = 0
                 volume = 0
@@ -76,11 +74,11 @@ def dataClean(stockCode):
             df = df.drop(i)
         elif t.tm_hour == 14 and t.tm_min > 57:
             df = df.drop(i)
-    df.to_csv("./data/%s.csv" % stockCode)
+    df.to_csv("./data/%s/%s.csv" % (stockCode, stockCode))
 
 
-def getTrainingDataMin(stockCode):
-    df = pd.read_csv("./data/%s.csv" % stockCode)
+def getVolumeData_Min(stockCode):
+    df = pd.read_csv("./data/%s/%s.csv" % (stockCode, stockCode))
     dataY = df.loc[:, ['volume']]
     dataX = pd.DataFrame()
 
@@ -117,10 +115,10 @@ def getTrainingDataMin(stockCode):
     dataX = dataX.iloc[1 :,]
     newDF = pd.concat([dataX, dataY], axis = 1)
 
-    newDF.to_csv('./data/%sTrainingDataMin.csv' % stockCode)
+    newDF.to_csv('./data/%s/%sTrainingDataMin.csv' % (stockCode, stockCode))
 
-def getTrainingDataDay(stockCode):
-    df = pd.read_csv("./data/%s.csv" % stockCode)
+def getVolumeData_Day(stockCode):
+    df = pd.read_csv("./data/%s/%s.csv" % (stockCode, stockCode))
     dataY = df.loc[:, ['volume']]
     dataX = pd.DataFrame()
     tempX = df.loc[:, ['volume']]
@@ -140,9 +138,9 @@ def getTrainingDataDay(stockCode):
     dataX = dataX.iloc[1 :,]
     newDF = pd.concat([dataX, dataY], axis = 1)
 
-    newDF.to_csv('./data/%sTrainingDataDay.csv' % stockCode)
+    newDF.to_csv('./data/%s/%sTrainingDataDay.csv' % (stockCode, stockCode))
 
-def getMarketDataDay(stockCode):
+def getMarketAndStockData_Day(stockCode):
     marketData = ts.get_hist_data('sh', start = '2013-12-22', end = '2016-12-22')
     l = len(marketData)
     marketLabel = [0] * l
@@ -174,10 +172,10 @@ def getMarketDataDay(stockCode):
     df.insert(17, 'marketLabel', marketLabel)
     df.insert(18, 'label', stockLabel)
 
-    df.to_csv('./data/%sChangeData.csv' % stockCode)
+    df.to_csv('./data/%s/%sChangeData.csv' % (stockCode, stockCode))
 
-def getRiseFallDataDay(stockCode):
-    df = pd.read_csv('./data/%sChangeData.csv' % stockCode)
+def getChangeData_Day(stockCode):
+    df = pd.read_csv('./data/%s/%sChangeData.csv' % (stockCode, stockCode))
     dataY = df.loc[:, ['label']]
     dataX = pd.DataFrame()
     indexList = [1, 2, 3, 4, 5, 7, 14, 15, 16, 17, 18, 19]
@@ -193,4 +191,27 @@ def getRiseFallDataDay(stockCode):
             cnt += 1
 
     newDF = pd.concat([dataX, dataY], axis = 1)
-    newDF.to_csv('./data/%sRiseFallDataDay.csv' % stockCode)
+    newDF.to_csv('./data/%s/%sRiseFallDataDay.csv' % (stockCode, stockCode))
+
+def getChangeData_Min(stockCode):
+    df = pd.read_csv('./data/%s/%s.csv' % (stockCode, stockCode))
+    l = len(df)
+    diff = df['open'] - df['close']
+    label = []
+    for i in range(l):
+        val = 1 if diff[i] > 0 else -1
+        label.append(val)
+    df.insert(8, 'label', label)
+    dataY = df.loc[:, 'label']
+    dataX = pd.DataFrame()
+    indexList = list(range(3, 9))
+    colNameDict = {3 : 'mAgoOpen', 4 : 'mAgoClose', 5 : 'mAgoLow', 6 : 'mAgoHigh', 7 : 'mAgoVolume', 8 : 'mAgoLabel'}
+    cnt = 0
+    for i in range(1, 4):
+        for j in indexList:
+            tempX = df.iloc[:, j]
+            tempX.index = range(i, len(tempX) + i, 1)
+            dataX.insert(cnt, str(i) + colNameDict[j], tempX)
+            cnt += 1
+    newDF = pd.concat([dataX, dataY], axis = 1)
+    newDF.to_csv('./data/%s/%sRiseFallDataMin.csv' % (stockCode, stockCode))
