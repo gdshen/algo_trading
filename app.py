@@ -53,4 +53,10 @@ def home():
     return render_template('home.html', email=current_user.email, form=form, rows=rows)
 
 
+@app.route('/history', methods=['GET'])
+@login_required
+def history():
+    return render_template('history.html')
+
+
 
