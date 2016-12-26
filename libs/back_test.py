@@ -44,7 +44,8 @@ class BackTest(object):
             vwap_amount += __policy[index][1][1] * predicted_vwap
             twap_price += predicted_vwap
 
-            result.loc[index] = [__policy[index][0][0] + " - " + __policy[index][0][1], actual_vwap, predicted_vwap]
+            result.loc[index] = [__policy[index][0][0] + "-" + __policy[index][0][1], actual_vwap,
+                                 predicted_vwap]
 
         if predicted_wap['wap'] == "vwap":
             result.loc[len(__policy)] = ["All Day VWAP",
@@ -58,6 +59,7 @@ class BackTest(object):
 
     def plot(self):
         result = self.result
+        result = result.loc[0:len(result) - 2]
         plot_data = result.set_index('time')
         ylim_min = min(min(plot_data['actual']), min(plot_data['predicted'])) - 0.1
         ylim_max = max(max(plot_data['actual']), max(plot_data['predicted'])) + 0.1
@@ -67,6 +69,9 @@ class BackTest(object):
             ax.set_title('VWAP')
         elif result['time'].loc[len(result) - 1] == "All Day TWAP":
             ax.set_title('TWAP')
+
+        ax.set_xticks(range(len(result)))
+        ax.set_xticklabels(result['time'], rotation=0)
         ax.set_ylabel('wap_value')
         ax.set_xlabel('Time')
         ax.set_ylim(ylim_min, ylim_max)
