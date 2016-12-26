@@ -6,7 +6,7 @@ import numpy as np
 
 from libs.data_persist_mongodb import read_from_db
 from libs.back_test import BackTest
-from libs.policy import WAP
+from libs.policy.WAP import WAP
 
 
 class NDayMean(WAP):
