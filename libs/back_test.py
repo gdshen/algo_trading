@@ -1,7 +1,9 @@
-import libs.data_persist_mongodb as it
-import pandas as pd
 import datetime
+
 import matplotlib.pyplot as plt
+import pandas as pd
+
+import libs.data_persist_mongodb as it
 
 
 class BackTest(object):
@@ -79,6 +81,10 @@ class BackTest(object):
         ax2.set_ylabel('wap_value')
         ax2.set_ylim(ylim_min, ylim_max)
         plt.show()
+
+    def diff(self):
+        r = self.result
+        return (r.iloc[-1, 2] - r.iloc[-1, 1]) / r.iloc[-1, 1]
 
 
 if __name__ == '__main__':

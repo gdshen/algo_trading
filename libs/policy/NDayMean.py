@@ -102,26 +102,14 @@ class NDayMean:
         policy['policy'] = l
         bt = BackTest(policy)
         result = bt.backtest()
-        bt.plot()
+        pprint(result)
+        return bt.diff()
 
 
 if __name__ == '__main__':
-    seven_day_mean = NDayMean('600000', '2016-12-21', 1000, 7)
-    # l = seven_day_mean.time_interval_mean('09:30', '09:31')
-    # print(l)
-    # l = seven_day_mean.time_slice('09:30', '09:40', 10)
-    # pprint(l)
-    # l = seven_day_mean.vwap('09:30', '10:30')
-    # pprint(l)
-    # seven_day_mean.score('09:30', '11:30')
+    seven_day_mean = NDayMean('600000', '2016-12-21')
     l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
-    # pprint(l)
-    l = seven_day_mean.vwap([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
+    l = seven_day_mean.vwap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
     pprint(l)
-    l = seven_day_mean.score([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
+    print(seven_day_mean.score(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
 
-    # df = seven_day_mean.score('09:30', '10:30')
-    # pprint(df)
-
-    # df = read_from_db('600000', '2016-12-22')
-    # print(df['2016-12-22 09:30:00' : '2016-12-22 09:40:00'])
