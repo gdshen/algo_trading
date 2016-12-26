@@ -5,24 +5,29 @@ import matplotlib.pyplot as plt
 
 
 class BackTest(object):
-    def backtest(self, __predicted_wap):
-        data_of_today = it.read_from_db(__predicted_wap['stock'], __predicted_wap['day'],
-                                        __predicted_wap['morning_start'], __predicted_wap['morning_end'],
-                                        __predicted_wap['afternoon_start'], __predicted_wap['afternoon_end'])
+    def __init__(self, predicted_wap):
+        self.__predicted_wap = predicted_wap
+        self.result = None
+
+    def backtest(self):
+        predicted_wap = self.__predicted_wap
+        data_of_today = it.read_from_db(predicted_wap['stock'], predicted_wap['day'],
+                                        predicted_wap['morning_start'], predicted_wap['morning_end'],
+                                        predicted_wap['afternoon_start'], predicted_wap['afternoon_end'])
 
         columns = ['time', 'actual', 'predicted']
         result = pd.DataFrame(columns=columns)
-        __policy = __predicted_wap['policy']
+        __policy = predicted_wap['policy']
         datetime_format = '%Y-%m-%d%H:%M:%S'
         vwap_volume = 0
         vwap_amount = 0.0
         twap_price = 0.0
         for index in range(len(__policy)):
-            start = datetime.datetime.strptime(__predicted_wap['day'] + __policy[index][0][0], datetime_format)
-            end = datetime.datetime.strptime(__predicted_wap['day'] + __policy[index][0][1], datetime_format)
-            order_point = datetime.datetime.strptime(__predicted_wap['day'] + __policy[index][1][0], datetime_format)
+            start = datetime.datetime.strptime(predicted_wap['day'] + __policy[index][0][0], datetime_format)
+            end = datetime.datetime.strptime(predicted_wap['day'] + __policy[index][0][1], datetime_format)
+            order_point = datetime.datetime.strptime(predicted_wap['day'] + __policy[index][1][0], datetime_format)
 
-            if __predicted_wap['wap'] == "vwap":
+            if predicted_wap['wap'] == "vwap":
                 actual_vwap_data = data_of_today[['amount', 'volume']][
                     (data_of_today['time'] > start) & (data_of_today['time'] < end)]
                 actual_vwap = sum(actual_vwap_data['amount']) / sum(actual_vwap_data['volume']) / 100
@@ -41,16 +46,18 @@ class BackTest(object):
 
             result.loc[index] = [__policy[index][0][0] + " - " + __policy[index][0][1], actual_vwap, predicted_vwap]
 
-        if __predicted_wap['wap'] == "vwap":
+        if predicted_wap['wap'] == "vwap":
             result.loc[len(__policy)] = ["All Day VWAP",
                                          sum(data_of_today['amount']) / sum(data_of_today['volume']) / 100,
                                          vwap_amount / vwap_volume]
-        elif __predicted_wap['wap'] == "twap":
+        elif predicted_wap['wap'] == "twap":
             result.loc[len(__policy)] = ["All Day TWAP", sum(data_of_today['price']) / len(data_of_today['price']),
                                          twap_price / len(__policy)]
+        self.result = result
         return result
 
-    def ResultToPlot(self, result):
+    def plot(self):
+        result = self.result
         plot_data = result.set_index('time')
         ylim_min = min(min(plot_data['actual']), min(plot_data['predicted'])) - 0.1
         ylim_max = max(max(plot_data['actual']), max(plot_data['predicted'])) + 0.1
@@ -87,6 +94,6 @@ if __name__ == '__main__':
     policy.append((("10:10:00", "10:20:00"), ("10:17:00", 2000)))
     __predicted_wap['policy'] = policy
 
-    backtest = BackTest()
-    result = backtest.backtest(__predicted_wap)
-    backtest.ResultToPlot(result)
+    backtest = BackTest(__predicted_wap)
+    result = backtest.backtest()
+    backtest.plot()
