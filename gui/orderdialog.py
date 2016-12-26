@@ -18,11 +18,12 @@ class OrderDialog(QDialog):
         self.strategyComboBox.addItems(["TWAP", "VWAP"])
         strategyLabel.setBuddy(self.strategyComboBox)
         
-        amountLabel = QLabel("A&mount:")
-        self.amountSpinBox = QSpinBox()
-        self.amountSpinBox.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
-        self.amountSpinBox.setRange(1, 1000000)
-        self.amountSpinBox.setValue(10000)
+        volumeLabel = QLabel("&Volume:")
+        self.volumeSpinBox = QSpinBox()
+        self.volumeSpinBox.setAlignment(Qt.AlignLeft|Qt.AlignVCenter)
+        self.volumeSpinBox.setRange(1, 1000000)
+        self.volumeSpinBox.setValue(10000)
+        volumeLabel.setBuddy(self.volumeSpinBox)
         
         okButton = QPushButton("OK")
         okButton.clicked.connect(self.accept)
@@ -39,8 +40,8 @@ class OrderDialog(QDialog):
         layout.addWidget(self.codeLineEdit, 0, 1)
         layout.addWidget(strategyLabel, 1, 0)
         layout.addWidget(self.strategyComboBox, 1, 1)
-        layout.addWidget(amountLabel, 2, 0)
-        layout.addWidget(self.amountSpinBox, 2, 1)
+        layout.addWidget(volumeLabel, 2, 0)
+        layout.addWidget(self.volumeSpinBox, 2, 1)
         layout.addLayout(buttonLayout, 3, 1)
         
         self.setLayout(layout)
@@ -48,7 +49,7 @@ class OrderDialog(QDialog):
         self.setWindowTitle("Create order")
     
     def getOrder(self):
-        return (self.codeLineEdit.text(), self.strategyComboBox.currentText(), self.amountSpinBox.value())
+        return (self.codeLineEdit.text(), self.strategyComboBox.currentText(), self.volumeSpinBox.value())
 
 if __name__ == "__main__":
     import sys
