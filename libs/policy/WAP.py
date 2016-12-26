@@ -1,5 +1,7 @@
-import arrow
 from datetime import timedelta
+
+import arrow
+import numpy as np
 
 
 class WAP:
