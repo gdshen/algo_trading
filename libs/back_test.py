@@ -11,9 +11,8 @@ class BackTest(object):
 
     def backtest(self):
         predicted_wap = self.__predicted_wap
-        data_of_today = it.read_from_db(predicted_wap['stock'], predicted_wap['day'],
-                                        predicted_wap['morning_start'], predicted_wap['morning_end'],
-                                        predicted_wap['afternoon_start'], predicted_wap['afternoon_end'])
+        data_of_today = it.read_from_db(predicted_wap['stock'], predicted_wap['day'], "09:30", "11:30", "13:00",
+                                        "15:00")
 
         columns = ['time', 'actual', 'predicted']
         result = pd.DataFrame(columns=columns)
@@ -86,10 +85,6 @@ if __name__ == '__main__':
     __predicted_wap = dict()
     __predicted_wap['stock'] = "600000"
     __predicted_wap['day'] = "2016-12-22"
-    __predicted_wap['morning_start'] = "09:30"
-    __predicted_wap['morning_end'] = "11:30"
-    __predicted_wap['afternoon_start'] = "13:00"
-    __predicted_wap['afternoon_end'] = "15:00"
     __predicted_wap['wap'] = 'twap'
 
     policy = list()
