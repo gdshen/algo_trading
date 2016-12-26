@@ -1,5 +1,5 @@
 from pprint import pprint
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import arrow
 import numpy as np
@@ -47,7 +47,7 @@ class NDayMean:
         return float(np.mean(time_interval_amount))
 
     @staticmethod
-    def time_slice(time_intervals, n):
+    def time_slice(time_intervals, n=10):
         """ slice the time_intervals to n slice
 
         :param time_intervals: [(start_time, end_time), (start_time, end_time), ...]
@@ -76,32 +76,29 @@ class NDayMean:
                               (t + (end - t) * np.random.random()).format(time_format)))
                 t += delta_t
         return l
-        # for i in range(n):
-        #     interval_start = (start + i * delta_t).format('HH:mm:ss')
-        #     interval_end = (start + (i + 1) * delta_t).format('HH:mm:ss')
-        #     random_time = (start + (i + np.random.rand()) * delta_t).format('HH:mm:ss')
-        #     l.append((interval_start, interval_end, random_time))
-        # return l
 
-    def vwap(self, start_time, end_time):
-        time_list = self.time_slice(start_time, end_time, 10)
+    def vwap(self, order_amount, time_intervals):
+        time_list = self.time_slice(time_intervals, self.n_slice)
         l = list()
+        order_number = dict()
+        total_order_number = 0
+        for (start, end, _) in time_list:
+            order_number[(start, end)] = self.time_interval_mean(start, end)
+            total_order_number += order_number[(start, end)]
+
         for (start, end, random_time) in time_list:
-            l.append(((start, end), (random_time, self.time_interval_mean(start, end))))
+            l.append(((start, end),
+                      (random_time, round(order_amount * order_number[(start, end)] / total_order_number))))
         return l
 
-    def score(self, start_time, end_time):
+    def score(self, order_amount, time_intervals):
         policy = {
             'stock': self.stock,
             'day': self.date,
-            'morning_start': start_time,
-            'morning_end': end_time,
-            'afternoon_start': 'NOT_USE',
-            'afternoon_end': 'NOT_USE',
             'wap': 'vwap',
             'policy': list()
         }
-        l = self.vwap(start_time, end_time)
+        l = self.vwap(order_amount, time_intervals)
         policy['policy'] = l
         bt = BackTest(policy)
         result = bt.backtest()
@@ -109,7 +106,7 @@ class NDayMean:
 
 
 if __name__ == '__main__':
-    seven_day_mean = NDayMean('600000', '2016-12-21', 15)
+    seven_day_mean = NDayMean('600000', '2016-12-21', 1000, 7)
     # l = seven_day_mean.time_interval_mean('09:30', '09:31')
     # print(l)
     # l = seven_day_mean.time_slice('09:30', '09:40', 10)
@@ -118,7 +115,11 @@ if __name__ == '__main__':
     # pprint(l)
     # seven_day_mean.score('09:30', '11:30')
     l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
+    # pprint(l)
+    l = seven_day_mean.vwap([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
     pprint(l)
+    l = seven_day_mean.score([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
+
     # df = seven_day_mean.score('09:30', '10:30')
     # pprint(df)
 
