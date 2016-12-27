@@ -18,7 +18,7 @@ def main(argv):
                 getData.getChangeData_Min(stockCode)
                 print('%s done!' % stockCode)
 
-        elif 1: #arg == 'model':
+        elif arg == 'model':
             stockCodeList = ['601398', '601988']
             for stockCode in stockCodeList:
                 print(stockCode)
@@ -47,8 +47,8 @@ def main(argv):
 
     '''usage example : predict day-level change
     ## input format [...]
-    input = [3.32,3.35,3.34,3.32,901219.88,0.6,0.04,1643590.88,-10.25,-0.35,-1,1,3.31,3.33,3.32,3.31,8509,9.12,0.3,0.04,1365710.5,3.7,0.13,1,1,3.3,3.32,3.31,3.29,933502.75,0.3,0.04,1714725.12,12.29,0.43,1,-1,3.31,3.32,3.3,3.28,1221874.88,-0.6,0.06,1738827.62,-14.39,-0.5,-1,-1,3.3,3.34,3.31,3.3,892366,-0.3,0.04,16667,10.75,45.02,1.58,1,-1]
-    ouput = predictAPI.getDayChange(input, '601988')
+    input = [500] * 55
+    output = predictAPI.getDayChange(input, '601988')
     print(output)
     '''
 
