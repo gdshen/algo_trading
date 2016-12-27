@@ -60,8 +60,8 @@ class NDayMean(WAP):
             total_order_number += order_number[(start, end)]
 
         for (start, end, random_time) in time_list:
-            l.append(((start, end),
-                      (random_time, round(order_amount * order_number[(start, end)] / total_order_number))))
+            l.append([[start, end],
+                      [random_time, round(order_amount * order_number[(start, end)] / total_order_number)]])
         return l
 
     def score(self, order_amount, time_intervals):
