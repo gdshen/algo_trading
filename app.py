@@ -8,6 +8,11 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 
+from libs.policy.NDayMean import NDayMean
+from libs.policy.TWAP import TWAP
+from libs.policy.VWAP import VWAP
+from datetime import date
+
 from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
@@ -31,18 +36,6 @@ flask_bcrypt = Bcrypt(app)
 # toolbar = DebugToolbarExtension(app)
 
 
-# @app.route('/post', methods=['POST'])
-# @login_required
-# def hello():
-#     if request.method == 'POST':
-##         a = request.form['hello']
-# a = request.get_json()
-#
-# return a['hello'] + 'receive'
-# else:
-#     return "NoData"
-
-
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def home():
@@ -51,6 +44,17 @@ def home():
     elif request.method == 'POST':
         data = request.get_json()
         print(data)
+
+        wap = None
+        if data['method'] == 'twap':
+            wap = TWAP(data['security'], date.today().strftime('%Y-%m-%d'))
+        elif data['method'] == 'vwap':
+            wap = NDayMean(data['security'], date.today().strftime('%Y-%m-%d'))
+        elif data['method'] == 'vwap_with_predict':
+            wap = VWAP(data['security'], date.today().strftime('%Y-%m-%d'))
+
+        user_id = current_user.get_id()
+        wap.save(user_id, data['operation'], data['shares'], [('09:30:00', "10:30:00")])
         return 'success'
 
 
@@ -58,11 +62,6 @@ def home():
 @login_required
 def predict():
     return render_template('predict.html')
-
-    # @app.route('/history', methods=['GET'])
-    # def history():
-    d = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
-    # return render_template('history.html')
 
 
 @app.route('/table', methods=['GET'])
