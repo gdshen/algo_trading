@@ -33,7 +33,7 @@ def order_match():
                 for user_policy_element in user_policy['policy']:
                     order_point = user_policy_element[1][0]
                     order_num = user_policy_element[1][1]
-                    if (datetime.datetime.now()+datetime.timedelta(minutes=527)).strftime("%X") == order_point:
+                    if (datetime.datetime.now()+datetime.timedelta(minutes=493)).strftime("%X") == order_point:
                         current_data = retrieve_from_redis(user_policy['stock'])
                         # print(current_data)
                         if user_policy['wap'] == 'twap' or user_policy['wap'] == 'vwap':
@@ -75,12 +75,16 @@ def order_match():
                                           int(price_3min['price'].iloc[-1] > price_3min['price'].iloc[0])]
 
                             next_min_trend = getMinChange(input_list, user_policy['stock'])
+                            print("next_min_trend: " + str(next_min_trend))
                             if user_policy['order_type'] == 'buy':
                                 if next_min_trend == 1:
                                     threshold_value = 0.1
                                 else:
                                     threshold_value = 0.4
-                                if random.random() > threshold_value:
+                                random_num = random.random()
+                                print("random_num: " +  str(random_num))
+                                print("threshold_value :" + str(threshold_value))
+                                if random_num > threshold_value:
                                     if current_data['a1_v'].iloc[-1] < order_num:
                                         logging.warning(
                                             str(user) + "在" + str(order_point) + "时刻要买入的关于" + user_policy[
@@ -126,7 +130,7 @@ def order_match():
 
 
 if __name__ == '__main__':
-    # order_match()
+    order_match()
     # current_data = retrieve_from_redis('601398')
     # datetime_format = '%Y-%m-%d%H:%M:%S'
     # end_1min = datetime.datetime.strptime("2016-12-23" + "09:40:57", datetime_format)
@@ -165,8 +169,8 @@ if __name__ == '__main__':
 
 
 
-    users = read_from_redis()
-    pprint(users)
+    # users = read_from_redis()
+    # pprint(users)
     # for user in users:
     #     user_policys = users[user]
     #     pprint(users[user])
