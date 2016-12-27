@@ -1,14 +1,14 @@
+import json
 import logging
 
-from flask import Flask, render_template, request, flash
+import redis
+from flask import Flask, render_template, request
+from flask import jsonify
 from flask_bcrypt import Bcrypt
-from flask_debugtoolbar import DebugToolbarExtension
 from flask_login import LoginManager, login_required, current_user
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
-from flask import jsonify
 
-import zerorpc
-from forms import OperationForm
+from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -31,46 +31,16 @@ flask_bcrypt = Bcrypt(app)
 # toolbar = DebugToolbarExtension(app)
 
 
-# @app.route('/', methods=['GET', 'POST'])
+# @app.route('/post', methods=['POST'])
 # @login_required
-# def home():
-#     form = OperationForm(request.form)
-#     rows = []
+# def hello():
 #     if request.method == 'POST':
-#         flash("Slicing orders on server")
-#         logging.debug(form.security.data)
-#         logging.debug(form.shares.data)
-#         logging.debug(form.operation.data)
-#         logging.debug(form.methods.data)
+##         a = request.form['hello']
+# a = request.get_json()
 #
-#         user_id = str(current_user.get_id())
-#         stock = form.security.data
-#         action = int(form.operation.data)
-#         volume = int(form.shares.data)
-#         method = form.methods.data
-#
-#         algo_trade_engine = zerorpc.Client('tcp://127.0.0.1:4242')
-#         rows = algo_trade_engine.slicing_order(user_id, stock, action, volume, method)
-#
-#     return render_template('home.html', email=current_user.email, form=form, rows=rows)
-
-
-@app.route('/test', methods=['GET'])
-@login_required
-def test():
-    return render_template('test.html')
-
-
-@app.route('/post', methods=['POST'])
-@login_required
-def hello():
-    if request.method == 'POST':
-        # a = request.form['hello']
-        a = request.get_json()
-
-        return a['hello'] + 'receive'
-    else:
-        return "NoData"
+# return a['hello'] + 'receive'
+# else:
+#     return "NoData"
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -84,37 +54,44 @@ def home():
         return 'success'
 
 
-@app.route('/history', methods=['GET'])
-def history():
-    # d = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
-    return render_template('history.html')
+@app.route('/predict', methods=['GET'])
+@login_required
+def predict():
+    return render_template('predict.html')
+
+    # @app.route('/history', methods=['GET'])
+    # def history():
+    d = {'a': 1, 'b': 2, 'c': 3, 'd': 4}
+    # return render_template('history.html')
 
 
 @app.route('/table', methods=['GET'])
+@login_required
 def table():
-    data = [
-        {"id": 1, 'name': "John", 'age': "20"},
-        {"id": 2, 'name': "Jane", 'age': "24"},
-        {"id": 3, 'name': "Susan", 'age': "16"},
-        {"id": 4, 'name': "Chris", 'age': "55"},
-        {"id": 5, 'name': "Dan", 'age': "40"},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-        {"id": 6, 'name': 'Dan', 'age': '50'},
-    ]
-    d = {"data": data}
+    user_id = current_user.get_id()
+    # print(user_id)
+
+    policies = read_from_redis(user_id)
+
+    # current_user
+    d = {"data": convert(policies=policies)}
     return jsonify(**d)
+
+
+def read_from_redis(user_id):
+    r = redis.StrictRedis(REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB)
+    values = r.lrange(user_id, 0, -1)
+    policies = list()
+    for value in values:
+        policies.append(json.loads(value.decode(encoding='UTF-8')))
+    return policies
+
+
+def convert(policies):
+    data = list()
+    for policy in policies:
+        stock = policy['stock']
+        operation_type = policy['order_type']
+        for strategy in policy['policy']:
+            data.append({'stock': stock, 'type': operation_type, 'volume': strategy[1][1], 'time': strategy[1][0]})
+    return data

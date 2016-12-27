@@ -1,0 +1,39 @@
+{% extends 'user.html' %}
+{% block head %}
+    <title>Predict</title>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div id="order">
+            <v-client-table :data="tableData" :columns="columns" :options="options" v-if="loaded"></v-client-table>
+        </div>
+    </div>
+
+    <script>
+        Vue.use(VueTables.client);
+
+        new Vue({
+            el: "#order",
+            data: {
+                columns: ['stock', 'type', 'volume', 'time'],
+                tableData: [
+                ],
+                options: {
+                    // see the options API
+                },
+                loaded: false
+            },
+            created: function () {
+                let vm = this;
+                axios.get('/table').then(function (response) {
+                    vm.tableData = response.data.data;
+                    console.log(response.data.data);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                vm.loaded = true
+            }
+        });
+    </script>
+{% endblock %}
