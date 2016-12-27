@@ -52,4 +52,5 @@ def getDayChange(input, stockCode):
 
 if __name__ == "__main__":
     print(os.path.dirname(__file__))
-    print(getDayVolume([43606, 22292, 15495, 35050, 22524, 31229, 66588], '601398'))
+    listio = [1000, 50] * 9
+    print(getMinChange(listio, '601398'))
