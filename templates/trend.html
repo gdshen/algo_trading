@@ -1,0 +1,38 @@
+{% extends 'user.html' %}
+{% block head %}
+    <title>Trend</title>
+{% endblock %}
+
+{% block content %}
+    <div id="line" class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-5">
+                <select v-model="selected">
+                    <option value="000001">SSE Composite Index</option>
+                    <option value="601398">Industrial and Coml Bank of China</option>
+                    <option value="601988">Back of China</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-4 col-md-offset-3">
+                <img v-bind:src="'https://image.sinajs.cn/newchart/daily/n/sh' + selected +'.gif'" alt="Day line">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-3">
+                <img v-bind:src="'https://image.sinajs.cn/newchart/weekly/n/sh' + selected + '.gif'" alt="Week line">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#line",
+            data: {
+                selected: "601398"
+            },
+        })
+    </script>
+{% endblock %}
