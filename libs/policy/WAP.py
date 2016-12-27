@@ -69,9 +69,9 @@ class WAP:
         pprint(result)
         return bt.diff()
 
-    def save(self, user_id, order_amount, time_intervals):
+    def save(self, user_id, order_type, order_amount, time_intervals):
         policy = {
-            'user_id': user_id,
+            'order_type': order_type,
             'stock': self.stock,
             'day': self.date,
             'wap': self.strategy,
