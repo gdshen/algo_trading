@@ -18,13 +18,13 @@ def main(argv):
                 getData.getChangeData_Min(stockCode)
                 print('%s done!' % stockCode)
 
-        elif arg == 'model':
+        elif 1: #arg == 'model':
             stockCodeList = ['601398', '601988']
             for stockCode in stockCodeList:
                 print(stockCode)
-                trainingModel.predictVolume_Day(stockCode)
+                #trainingModel.predictVolume_Day(stockCode)
                 trainingModel.predictChange_Day(stockCode)
-                trainingModel.predictChange_Min(stockCode)
+                #trainingModel.predictChange_Min(stockCode)
                 print('%s done!' % stockCode)
 
     '''usage example : predict day-level volume

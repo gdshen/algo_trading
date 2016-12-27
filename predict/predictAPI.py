@@ -26,8 +26,8 @@ def getMinChange(input, stockCode):
 def getDayChange(input, stockCode):
     df = pd.read_csv('./data/%s/%sRiseFallDataDay.csv' % (stockCode, stockCode))
     l = len(df)
-    X = df.iloc[5 : l - 1, 1 : 58]
-    for i in range(57):
+    X = df.iloc[5 : l - 1, 1 : 55]
+    for i in range(55):
         meanX = np.mean(X.iloc[:, i])
         stdX = np.std(X.iloc[:, i])
         input[i] = (input[i] - meanX) / stdX

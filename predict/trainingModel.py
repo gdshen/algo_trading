@@ -91,7 +91,7 @@ def predictChange_Day(stockCode):
     df = pd.read_csv('./data/%s/%sRiseFallDataDay.csv' % (stockCode, stockCode))
     l = len(df)
     Y = df.loc[5 : l - 2, 'label']
-    X = df.iloc[5 : l - 1, 1 : 58]
+    X = df.iloc[5 : l - 1, 1 : 55]
     X = preprocessing.scale(X)
 
     para = [{'kernel' : ['rbf'],\
@@ -102,14 +102,13 @@ def predictChange_Day(stockCode):
     if stockCode == '601398':
         para = [{'kernel' : ['rbf'],\
                  'gamma' : [0.25, 0.5, 1, 2, 4],\
-                 'C' : [140]}]
-        dimension = 12
+                 'C' : [50]}]
+        dimension = 17
     if stockCode == '601988':
         para = [{'kernel' : ['rbf'],\
                  'gamma' : [0.25, 0.5, 1, 2, 4],\
-                 'C' : [30]}]
-        dimension = 10
-
+                 'C' : [50]}]
+        dimension = 9
     pca = PCA(n_components = dimension)
     newX = pca.fit_transform(X)
 
