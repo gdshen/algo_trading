@@ -26,7 +26,7 @@ app.session_interface = MongoEngineSessionInterface(db)
 flask_bcrypt = Bcrypt(app)
 
 # flask_debugtoolbar configuration
-toolbar = DebugToolbarExtension(app)
+# toolbar = DebugToolbarExtension(app)
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -53,10 +53,30 @@ def home():
     return render_template('home.html', email=current_user.email, form=form, rows=rows)
 
 
-@app.route('/history', methods=['GET'])
+@app.route('/test', methods=['GET'])
 @login_required
 def history():
-    return render_template('history.html')
+    return render_template('test.html')
 
 
+@app.route('/post', methods=['POST'])
+@login_required
+def hello():
+    if request.method == 'POST':
+        # a = request.form['hello']
+        a = request.get_json()
 
+        return a['hello'] + 'receive'
+    else:
+        return "NoData"
+
+
+@app.route('/home', methods=['GET', 'POST'])
+@login_required
+def user_home():
+    if request.method == 'GET':
+        return render_template('user_home.html')
+    elif request.method == 'POST':
+        data = request.get_json()
+        # print(data)
+        return 'success'

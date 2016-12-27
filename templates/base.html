@@ -10,6 +10,8 @@
     {#jquery should be loaded first than bootstrap.js#}
     <script src="{{ url_for('static', filename='js/jquery-3.1.1.js') }}"></script>
     <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/axios.js') }}"></script>
 
     {% block head %}{% endblock %}
 </head>

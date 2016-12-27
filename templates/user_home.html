@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title> user home </title>
+{% endblock %}
+
+{% block content %}
+    <form id="form" v-on:submit.prevent="submit">
+        <label for="security">Security</label>
+        <select id="security" v-model="order.security">
+            <option value="601398">Industrial and Coml Bank of China</option>
+            <option value="601988">Bank of China</option>
+        </select>
+        <label for="shares">Shares</label>
+        <input type="number" id="shares" v-model="order.shares">
+
+        <label for="operation">Operation</label>
+        <select id="operation" v-model="order.operation">
+            <option value="buy">buy</option>
+            <option value="sell">sell</option>
+        </select>
+
+        <label for="method">Methods</label>
+        <select id="method" v-model="order.method">
+            <option value="twap">twap</option>
+            <option value="vwap">vwap</option>
+        </select>
+        <input type="submit" value="submit">
+    </form>
+
+    <script>
+        let form = new Vue({
+            el: "#form",
+            delimiters: ['${', '}'],
+            data: {
+                order: {
+                    security: '601398',
+                    shares: 0,
+                    operation: 'buy',
+                    method: 'vwap'
+                }
+            },
+            methods: {
+                submit: function() {
+                    let vm = this;
+                    axios.post('/home', {
+                        security: vm.order.security,
+                        shares: vm.order.shares,
+                        operation: vm.order.operation,
+                        method: vm.order.method
+                    }).then(function (response) {
+                        alert('submit success!')
+                        console.log(response.data)
+                    }).catch(function (error){
+                        alert('submit failed!')
+                        console.log(error);
+                    })
+                }
+            }
+        })
+    </script>
+{% endblock %}
