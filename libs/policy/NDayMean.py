@@ -1,7 +1,6 @@
 from pprint import pprint
 
 import arrow
-import numpy as np
 
 from libs.data_persist_mongodb import read_from_db
 from libs.policy.WAP import WAP
@@ -10,7 +9,7 @@ from libs.policy.WAP import WAP
 class NDayMean(WAP):
     def __init__(self, stock, date, n_days=7, n_slice=10):
         super().__init__(stock, date, n_days, n_slice)
-        self.type = 'vwap'
+        self.strategy = 'vwap'
         self.data = self.load_data()
 
     def load_data(self):
@@ -41,7 +40,11 @@ class NDayMean(WAP):
             time_interval = self.data[i][start: end]
 
             time_interval_amount.append(time_interval['volume'].sum())
-        return float(np.mean(time_interval_amount))
+            result = 0.0
+            for i in range(len(time_interval_amount)):
+                result += time_interval_amount[i] / pow(2, i + 1)
+
+        return result
 
     def wap(self, order_amount, time_intervals):
         time_list = self.time_slice(time_intervals, self.n_slice)

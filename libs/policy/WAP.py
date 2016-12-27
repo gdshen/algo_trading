@@ -13,7 +13,7 @@ class WAP:
         self.date = date
         self.n_days = n_days
         self.n_slice = n_slice
-        self.type = None
+        self.strategy = None
 
     def load_data(self):
         pass
@@ -56,7 +56,7 @@ class WAP:
         policy = {
             'stock': self.stock,
             'day': self.date,
-            'wap': self.type,
+            'wap': self.strategy,
             'policy': list()
         }
         l = self.wap(order_amount, time_intervals)

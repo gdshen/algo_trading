@@ -4,7 +4,7 @@ from libs.policy import WAP
 class TWAP(WAP):
     def __init__(self, stock, date, n_days=7, n_slice=10):
         super().__init__(stock, date, n_days, n_slice)
-        self.type = 'twap'
+        self.strategy = 'twap'
 
     def wap(self, order_amount, time_intervals):
         time_list = self.time_slice(time_intervals, self.n_slice)
