@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from libs.policy.NDayMean import NDayMean
 from predict.predictAPI import getDayVolume
 
@@ -8,7 +6,6 @@ class VWAP(NDayMean):
     def __init__(self, stock, date, n_days=7, n_slice=10):
         super().__init__(stock, date, n_days, n_slice)
         self.strategy = "vwap_with_predict"
-
 
     def wap(self, order_amount, time_intervals):
         time_list = self.time_slice(time_intervals, self.n_slice)
@@ -32,7 +29,5 @@ class VWAP(NDayMean):
 if __name__ == '__main__':
     seven_day_mean = VWAP('601398', '2016-12-23')
     l = seven_day_mean.time_slice([('09:40:00', '09:55:00')], 8)
-    # pprint(l)
     l = seven_day_mean.wap(1000, [('09:40:00', '09:55:00')])
-    pprint(l)
     print(seven_day_mean.save('123456', 'buy', 1000, [('09:40:00', '09:55:00')]))

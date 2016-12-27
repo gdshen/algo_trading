@@ -1,8 +1,8 @@
 import datetime
 import json
 import logging
-import time
 import random
+import time
 from pprint import pprint
 
 import redis

@@ -17,3 +17,8 @@ class TWAP(WAP):
 
     def score(self, order_amount, time_intervals):
         super().score(order_amount, time_intervals)
+
+
+if __name__ == '__main__':
+    seven_day_mean = TWAP('600000', '2016-12-22')
+    print(seven_day_mean.score(1000, [('09:40:00', '09:55:00')]))
