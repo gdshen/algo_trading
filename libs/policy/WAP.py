@@ -1,12 +1,19 @@
 from datetime import timedelta
+from pprint import pprint
 
 import arrow
 import numpy as np
 
+from libs.back_test import BackTest
+
 
 class WAP:
-    def __init__(self):
-        pass
+    def __init__(self, stock, date, n_days=7, n_slice=10):
+        self.stock = stock
+        self.date = date
+        self.n_days = n_days
+        self.n_slice = n_slice
+        self.type = None
 
     def load_data(self):
         pass
@@ -41,3 +48,20 @@ class WAP:
                               (t + (end - t) * np.random.random()).format(time_format)))
                 t += delta_t
         return l
+
+    def wap(self, order_amount, time_intervals):
+        pass
+
+    def score(self, order_amount, time_intervals):
+        policy = {
+            'stock': self.stock,
+            'day': self.date,
+            'wap': self.type,
+            'policy': list()
+        }
+        l = self.wap(order_amount, time_intervals)
+        policy['policy'] = l
+        bt = BackTest(policy)
+        result = bt.backtest()
+        pprint(result)
+        return bt.diff()

@@ -1,20 +1,16 @@
 from pprint import pprint
-from datetime import timedelta
 
 import arrow
 import numpy as np
 
 from libs.data_persist_mongodb import read_from_db
-from libs.back_test import BackTest
 from libs.policy.WAP import WAP
 
 
 class NDayMean(WAP):
     def __init__(self, stock, date, n_days=7, n_slice=10):
-        self.stock = stock
-        self.date = date
-        self.n_days = n_days
-        self.n_slice = n_slice
+        super().__init__(stock, date, n_days, n_slice)
+        self.type = 'vwap'
         self.data = self.load_data()
 
     def load_data(self):
@@ -47,9 +43,7 @@ class NDayMean(WAP):
             time_interval_amount.append(time_interval['volume'].sum())
         return float(np.mean(time_interval_amount))
 
-
-
-    def vwap(self, order_amount, time_intervals):
+    def wap(self, order_amount, time_intervals):
         time_list = self.time_slice(time_intervals, self.n_slice)
         l = list()
         order_number = dict()
@@ -64,24 +58,12 @@ class NDayMean(WAP):
         return l
 
     def score(self, order_amount, time_intervals):
-        policy = {
-            'stock': self.stock,
-            'day': self.date,
-            'wap': 'vwap',
-            'policy': list()
-        }
-        l = self.vwap(order_amount, time_intervals)
-        policy['policy'] = l
-        bt = BackTest(policy)
-        result = bt.backtest()
-        pprint(result)
-        return bt.diff()
+        super().score(order_amount, time_intervals)
 
 
 if __name__ == '__main__':
     seven_day_mean = NDayMean('600000', '2016-12-21')
     l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
-    l = seven_day_mean.vwap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
+    l = seven_day_mean.wap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
     pprint(l)
     print(seven_day_mean.score(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
-
