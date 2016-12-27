@@ -69,13 +69,16 @@ def predict():
 @login_required
 def table():
     user_id = current_user.get_id()
-    # print(user_id)
-
     policies = read_from_redis(user_id)
 
-    # current_user
     d = {"data": convert(policies=policies)}
     return jsonify(**d)
+
+
+@app.route('/trend', methods=['GET'])
+@login_required
+def trend():
+    return render_template('trend.html')
 
 
 def read_from_redis(user_id):
@@ -92,6 +95,7 @@ def convert(policies):
     for policy in policies:
         stock = policy['stock']
         operation_type = policy['order_type']
+        wap = policy['wap']
         for strategy in policy['policy']:
-            data.append({'stock': stock, 'type': operation_type, 'volume': strategy[1][1], 'time': strategy[1][0]})
+            data.append({'stock': stock, 'type': operation_type, 'wap': wap, 'volume': strategy[1][1], 'time': strategy[1][0]})
     return data
