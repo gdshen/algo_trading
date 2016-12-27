@@ -1,4 +1,4 @@
-from libs.policy import WAP
+from libs.policy.WAP import WAP
 
 
 class TWAP(WAP):
