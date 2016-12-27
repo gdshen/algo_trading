@@ -1,102 +1,88 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block head %}
-    <title>Home Page</title>
+    <title> User home </title>
 {% endblock %}
 
 {% block content %}
-    {#    <h2>You are in homepage!</h2>#}
-    {#    <p>Your username is {{ email }}</p>#}
-    <h2>Welcome {{ email }}</h2>
 
-    {#    todo use form.xxx to refactor form below #}
     <div class="container">
-        <form method="post">
-            {{ form.hidden_tag() }}
+        <form id="form" v-on:submit.prevent="submit">
             <div class="form-group row">
                 <label for="security" class="col-sm-2 col-form-label">Security</label>
                 <div class="col-sm-10">
-                    <input type="text" name="security" class="form-control" id="security" placeholder="Security">
+                    <select id="security" v-model="order.security" class="form-control">
+                        <option value="601398">Industrial and Coml Bank of China</option>
+                        <option value="601988">Bank of China</option>
+                    </select>
                 </div>
             </div>
 
             <div class="form-group row">
                 <label for="shares" class="col-sm-2 col-form-label">Shares</label>
                 <div class="col-sm-10">
-                    <input type="number" name="shares" class="form-control" id="shares" placeholder="Shares">
+                    <input type="number" id="shares" v-model="order.shares" class="form-control">
                 </div>
             </div>
 
-            <fieldset class="form-group row">
-                <legend class="col-form-legend col-sm-2">Operations</legend>
+            <div class="form-group row">
+                <label for="operation" class="col-sm-2 col-form-label">Operation</label>
                 <div class="col-sm-10">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="radio" name="operation" id="buy"
-                                   value="0" checked>buy
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="radio" name="operation" id="sell"
-                                   value="1">
-                            sell
-                        </label>
-                    </div>
+                    <select id="operation" v-model="order.operation" class="form-control">
+                        <option value="buy">buy</option>
+                        <option value="sell">sell</option>
+                    </select>
                 </div>
-            </fieldset>
-
-            <fieldset class="form-group row">
-                <legend class="col-form-legend col-sm-2">Methods</legend>
-                <div class="col-sm-10">
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="radio" name="methods" id="twap"
-                                   value="twap" checked>twap
-                        </label>
-                    </div>
-
-                    <div class="form-check">
-                        <label class="form-check-label">
-                            <input class="form-check-input" type="radio" name="methods" id="vwap"
-                                   value="vwap">vwap
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
+            </div>
 
             <div class="form-group row">
-                <div class="offset-sm-2 col-sm-10">
-                    <button type="submit" class="btn btn-primary">Do operation</button>
+                <label for="method" class="col-sm-2 col-form-label">Methods</label>
+                <div class="col-sm-10">
+                    <select id="method" v-model="order.method" class="form-control">
+                        <option value="twap">twap</option>
+                        <option value="vwap">vwap</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-sm-10 offset-sm-2">
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </div>
         </form>
     </div>
 
-    <div class="container">
-        <h2>Results</h2>
-        <p>Server will execute your order according to the follow table.</p>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Security</th>
-                <th>Action</th>
-                <th>Volume</th>
-                <th>Time</th>
-            </tr>
-            </thead>
-
-            <tbody>
-            {% for row in rows %}
-                <tr>
-                    <td>{{ row['stock'] }}</td>
-                    <td>{{ row['action'] }}</td>
-                    <td>{{ row['volume'] }}</td>
-                    <td>{{ row['time'] }}</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+    <script>
+        let form = new Vue({
+            el: "#form",
+            delimiters: ['${', '}'],
+            data: {
+                order: {
+                    security: '601398',
+                    shares: 0,
+                    operation: 'buy',
+                    method: 'vwap'
+                }
+            },
+            methods: {
+                submit: function () {
+                    let vm = this;
+                    axios.post('/', {
+                        security: vm.order.security,
+                        shares: vm.order.shares,
+                        operation: vm.order.operation,
+                        method: vm.order.method
+                    }).then(function (response) {
+                        alert('submit success!');
+                        console.log(response.data)
+                    }).catch(function (error) {
+                        alert('submit failed!');
+                        console.log(error);
+                    })
+                }
+            }
+        })
+    </script>
 {% endblock %}
