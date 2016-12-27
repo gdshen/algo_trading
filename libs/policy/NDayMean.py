@@ -24,7 +24,7 @@ class NDayMean(WAP):
                 l.append(df)
         return l
 
-    def time_interval_mean(self, start_time: str, end_time: str) -> float:
+    def time_interval_amount(self, start_time: str, end_time: str) -> list:
         """ compute the mean order amount of the interval time in the previous n days
 
         :param start_time: format 'HH:mm:ss'
@@ -34,15 +34,19 @@ class NDayMean(WAP):
         time_interval_amount = list()
         for i in range(self.n_days):
             day = arrow.get(self.data[i].iloc[0, 4]).date().strftime('%Y-%m-%d')
-
             start = arrow.get(day + ' ' + start_time).datetime
             end = arrow.get(day + ' ' + end_time).datetime
-            time_interval = self.data[i][start: end]
 
+            time_interval = self.data[i][start: end]
             time_interval_amount.append(time_interval['volume'].sum())
-            result = 0.0
-            for i in range(len(time_interval_amount)):
-                result += time_interval_amount[i] / pow(2, i + 1)
+
+        return time_interval_amount
+
+    def time_interval_mean(self, start_time: str, end_time: str) -> float:
+        time_interval_amount = self.time_interval_amount(start_time, end_time)
+        result = 0.0
+        for i in range(len(time_interval_amount)):
+            result += time_interval_amount[i] / pow(2, i + 1)
 
         return result
 
@@ -67,6 +71,7 @@ class NDayMean(WAP):
 if __name__ == '__main__':
     seven_day_mean = NDayMean('600000', '2016-12-21')
     l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
+    pprint(l)
     l = seven_day_mean.wap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
     pprint(l)
     print(seven_day_mean.score(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))

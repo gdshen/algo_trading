@@ -1,12 +1,9 @@
-import datetime
 import json
-from time import sleep
+import logging
 
-import arrow
 import pandas as pd
 import redis
 import tushare as ts
-import logging
 
 logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
@@ -74,5 +71,5 @@ if __name__ == '__main__':
     #     else:
     #         sleep(6)
 
-    df = retrieve_from_redis('600000')
+    df = retrieve_from_redis('601398')
     print(df)

@@ -3,7 +3,9 @@ from pprint import pprint
 
 import arrow
 import numpy as np
+from pymongo import MongoClient
 
+from config import MONGODB_URL
 from libs.back_test import BackTest
 
 
@@ -65,3 +67,21 @@ class WAP:
         result = bt.backtest()
         pprint(result)
         return bt.diff()
+
+    def save(self, order_amount, time_intervals, user_id):
+        policy = {
+            'user_id': user_id,
+            'stock': self.stock,
+            'day': self.date,
+            'wap': self.strategy,
+            'policy': list()
+        }
+        l = self.wap(order_amount, time_intervals)
+        policy['policy'] = l
+
+        client = MongoClient(MONGODB_URL)
+        db = client['trade']
+        order = db['order']
+        order.insert(policy)
+
+
