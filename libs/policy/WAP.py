@@ -1,11 +1,12 @@
+import json
 from datetime import timedelta
 from pprint import pprint
 
 import arrow
 import numpy as np
-from pymongo import MongoClient
+import redis
 
-from config import MONGODB_URL
+from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
 from libs.back_test import BackTest
 
 
@@ -68,7 +69,7 @@ class WAP:
         pprint(result)
         return bt.diff()
 
-    def save(self, order_amount, time_intervals, user_id):
+    def save(self, user_id, order_amount, time_intervals):
         policy = {
             'user_id': user_id,
             'stock': self.stock,
@@ -79,9 +80,5 @@ class WAP:
         l = self.wap(order_amount, time_intervals)
         policy['policy'] = l
 
-        client = MongoClient(MONGODB_URL)
-        db = client['trade']
-        order = db['order']
-        order.insert(policy)
-
-
+        r = redis.StrictRedis(host=REDIS_SERVER_HOST, port=REDIS_SERVER_PORT, db=REDIS_SERVER_DB)
+        r.rpush(user_id, json.dumps(policy))

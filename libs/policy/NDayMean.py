@@ -60,8 +60,8 @@ class NDayMean(WAP):
             total_order_number += order_number[(start, end)]
 
         for (start, end, random_time) in time_list:
-            l.append(((start, end),
-                      (random_time, round(order_amount * order_number[(start, end)] / total_order_number))))
+            l.append([[start, end],
+                      [random_time, round(order_amount * order_number[(start, end)] / total_order_number)]])
         return l
 
     def score(self, order_amount, time_intervals):
@@ -74,4 +74,4 @@ if __name__ == '__main__':
     pprint(l)
     l = seven_day_mean.wap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
     pprint(l)
-    print(seven_day_mean.score(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
+    print(seven_day_mean.save('12345', 1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
