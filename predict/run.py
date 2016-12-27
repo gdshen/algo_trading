@@ -18,7 +18,7 @@ def main(argv):
                 getData.getChangeData_Min(stockCode)
                 print('%s done!' % stockCode)
 
-        elif 1:#arg == 'model':
+        elif arg == 'model':
             stockCodeList = ['601398', '601988']
             for stockCode in stockCodeList:
                 print(stockCode)
