@@ -26,7 +26,7 @@ def getMinChange(input, stockCode):
 def getDayChange(input, stockCode):
     df = pd.read_csv('./data/%s/%sRiseFallDataDay.csv' % (stockCode, stockCode))
     l = len(df)
-    X = df.iloc[5 : l - 1, 1 : 55]
+    X = df.iloc[5 : l - 1, 1 : 56]
     for i in range(55):
         meanX = np.mean(X.iloc[:, i])
         stdX = np.std(X.iloc[:, i])
@@ -34,9 +34,9 @@ def getDayChange(input, stockCode):
 
     dimension = 11
     if stockCode == '601398':
-        dimension = 12
+        dimension = 17
     elif stockCode == '601988':
-        dimension = 10
+        dimension = 9
     pca = PCA(n_components = dimension)
     X = pca.fit_transform(X)
     input = pca.transform(input)

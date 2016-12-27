@@ -91,7 +91,7 @@ def predictChange_Day(stockCode):
     df = pd.read_csv('./data/%s/%sRiseFallDataDay.csv' % (stockCode, stockCode))
     l = len(df)
     Y = df.loc[5 : l - 2, 'label']
-    X = df.iloc[5 : l - 1, 1 : 55]
+    X = df.iloc[5 : l - 1, 1 : 56]
     X = preprocessing.scale(X)
 
     para = [{'kernel' : ['rbf'],\
