@@ -41,10 +41,21 @@
                     <select id="method" v-model="order.method" class="form-control">
                         <option value="twap">twap</option>
                         <option value="vwap">vwap</option>
+                        <option value="vwap_with_predict">vwap_with_predict</option>
                     </select>
                 </div>
             </div>
 
+            <div class="form-group row" v-for="(t, index) in timeArray">
+                <label class="col-sm-2 col-form-label">Time Interval ${ index + 1 }: </label>
+                <div class="col-sm-10">
+                    <vue-timepicker v-model="t.start_time"></vue-timepicker>
+                    <span> to </span>
+                    <vue-timepicker v-model="t.end_time"></vue-timepicker>
+                    <button v-on:click="addTimeInterval" type="button" class="btn btn-primary">Add Time Interval
+                    </button>
+                </div>
+            </div>
 
             <div class="form-group row">
                 <div class="col-sm-10 offset-sm-2">
@@ -55,6 +66,8 @@
     </div>
 
     <script>
+        Vue.use(VueTimepicker);
+
         let form = new Vue({
             el: "#form",
             delimiters: ['${', '}'],
@@ -64,7 +77,14 @@
                     shares: 0,
                     operation: 'buy',
                     method: 'vwap'
-                }
+                },
+                {#                timeValue: {#}
+                {#                    HH: "10",#}
+                {#                    mm: "05"#}
+                {#                },#}
+                timeArray: [
+                    {start_time: {HH: '09', mm: '30'}, end_time: {HH: '09', mm: '30'}}
+                ]
             },
             methods: {
                 submit: function () {
@@ -73,7 +93,8 @@
                         security: vm.order.security,
                         shares: vm.order.shares,
                         operation: vm.order.operation,
-                        method: vm.order.method
+                        method: vm.order.method,
+                        timeIntervals: vm.timeArray
                     }).then(function (response) {
                         alert('submit success!');
                         console.log(response.data)
@@ -81,8 +102,32 @@
                         alert('submit failed!');
                         console.log(error);
                     })
+                },
+
+                addTimeInterval: function () {
+                    let d = {start_time: {HH: '09', mm: '30'}, end_time: {HH: '09', mm: '30'}};
+                    this.timeArray.push(d);
                 }
             }
-        })
+        });
+
+        {#        let yourComponent = new Vue({#}
+        {#            el: "#time",#}
+        {#            components: { VueTimepicker },#}
+        {#            delimiters: ['${', '}'],#}
+        {#            data: {#}
+        {#                timeValue: {#}
+        {#                    HH: "10",#}
+        {#                    mm: "05"#}
+        {#                    ss: "00"#}
+        {#                }#}
+        {#                yourDaysArray: [#}
+        {#                                        {start_time: {HH: '08', mm: '00'}, end_time: {HH: '09', mm: '00'}},#}
+        {#                                        {start_time: {HH: '15', mm: '00'}, end_time: {HH: '', mm: ''}},#}
+        {#                                        {start_time: {HH: '', mm: ''}, end_time: {HH: '13', mm: '30'}},#}
+        {#                                        {start_time: {HH: '', mm: ''}, end_time: {HH: '', mm: ''}}#}
+        {#                ]#}
+        {#            }#}
+        {#        });#}
     </script>
 {% endblock %}

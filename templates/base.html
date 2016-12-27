@@ -7,6 +7,8 @@
 
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     <link href="{{ url_for('static', filename='css/bootstrap.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/vue2-timepicker.css') }}" rel="stylesheet">
+
 
     {#jquery should be loaded first than bootstrap.js#}
     <script src="{{ url_for('static', filename='js/jquery-3.1.1.js') }}"></script>
@@ -16,6 +18,7 @@
     {#    <script src="{{ url_for('static', filename='js/vue-resource.js') }}"></script>#}
     <script src="{{ url_for('static', filename='js/axios.js') }}"></script>
     <script src="{{ url_for('static', filename='js/vue-tables.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vue2-timepicker.js') }}"></script>
 
     {% block userhead %}{% endblock %}
     {% block head %} {% endblock %}
