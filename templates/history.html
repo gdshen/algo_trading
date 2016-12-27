@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <title>History</title>
+{% endblock %}
+
+{% block content %}
+    <div id="people1">
+        <v-client-table :data="tableData" :columns="columns" :options="options" v-if="loaded"></v-client-table>
+    </div>
+
+{#    <div id="people2">#}
+{#        <v-server-table url="/people" :columns="columns" :options="options"></v-server-table>#}
+{#    </div>#}
+
+    <script>
+        Vue.use(VueTables.client);
+{#        Vue.use(VueTables.server);#}
+
+        new Vue({
+            el: "#people1",
+            data: {
+                columns: ['id', 'name', 'age'],
+                tableData: [
+{#                    {id: 1, name: "John", age: "20"},#}
+{#                    {id: 2, name: "Jane", age: "24"},#}
+{#                    {id: 3, name: "Susan", age: "16"},#}
+{#                    {id: 4, name: "Chris", age: "55"},#}
+{#                    {id: 5, name: "Dan", age: "40"}#}
+                ],
+                options: {
+                    // see the options API
+                },
+                loaded: false
+            },
+
+            created: function() {
+                let vm = this;
+                axios.get('/table').then(function (response) {
+                    vm.tableData = response.data.data;
+                    console.log(response.data.data);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+                vm.loaded = true
+            }
+
+        });
+
+{#        new Vue({#}
+{#            el: "#people2",#}
+{#            data: {#}
+{#                columns: ['id', 'name', 'age'],#}
+{#                options: {#}
+{#                    // see the options API#}
+{#                }#}
+{#            }#}
+{#        });#}
+    </script>
+
+
+{% endblock %}
