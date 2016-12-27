@@ -11,8 +11,8 @@ class TWAP(WAP):
         l = list()
 
         for (start, end, random_time) in time_list:
-            l.append(((start, end),
-                      (random_time, order_amount / len(time_list))))
+            l.append([[start, end],
+                      [random_time, order_amount / len(time_list)]])
         return l
 
     def score(self, order_amount, time_intervals):

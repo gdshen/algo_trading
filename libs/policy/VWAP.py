@@ -23,9 +23,9 @@ class VWAP(NDayMean):
             total_order_number_predict += order_number_predict[(start, end)]
 
         for (start, end, random_time) in time_list:
-            l.append(((start, end),
-                      (random_time,
-                       round(order_amount * order_number_predict[(start, end)] / total_order_number_predict))))
+            l.append([[start, end],
+                      [random_time,
+                       round(order_amount * order_number_predict[(start, end)] / total_order_number_predict)]])
 
         return l
 
