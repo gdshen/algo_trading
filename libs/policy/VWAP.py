@@ -31,8 +31,8 @@ class VWAP(NDayMean):
 
 if __name__ == '__main__':
     seven_day_mean = VWAP('601398', '2016-12-23')
-    l = seven_day_mean.time_slice([('09:30:00', '09:45:00')], 8)
+    l = seven_day_mean.time_slice([('09:40:00', '09:55:00')], 8)
     # pprint(l)
-    l = seven_day_mean.wap(1000, [('09:30:00', '09:45:00')])
+    l = seven_day_mean.wap(1000, [('09:40:00', '09:55:00')])
     pprint(l)
-    print(seven_day_mean.save('123456', 'buy', 1000, [('09:30:00', '09:45:00')]))
+    print(seven_day_mean.save('123456', 'buy', 1000, [('09:40:00', '09:55:00')]))
