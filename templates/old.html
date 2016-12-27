@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <title>Home Page</title>
+{% endblock %}
+
+{% block content %}
+    {#    <h2>You are in homepage!</h2>#}
+    {#    <p>Your username is {{ email }}</p>#}
+    <h2>Welcome {{ email }}</h2>
+
+    {#    todo use form.xxx to refactor form below #}
+    <div class="container">
+        <form method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group row">
+                <label for="security" class="col-sm-2 col-form-label">Security</label>
+                <div class="col-sm-10">
+                    <input type="text" name="security" class="form-control" id="security" placeholder="Security">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="shares" class="col-sm-2 col-form-label">Shares</label>
+                <div class="col-sm-10">
+                    <input type="number" name="shares" class="form-control" id="shares" placeholder="Shares">
+                </div>
+            </div>
+
+            <fieldset class="form-group row">
+                <legend class="col-form-legend col-sm-2">Operations</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="operation" id="buy"
+                                   value="0" checked>buy
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="operation" id="sell"
+                                   value="1">
+                            sell
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-group row">
+                <legend class="col-form-legend col-sm-2">Methods</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="methods" id="twap"
+                                   value="twap" checked>twap
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <label class="form-check-label">
+                            <input class="form-check-input" type="radio" name="methods" id="vwap"
+                                   value="vwap">vwap
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="form-group row">
+                <div class="offset-sm-2 col-sm-10">
+                    <button type="submit" class="btn btn-primary">Do operation</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Results</h2>
+        <p>Server will execute your order according to the follow table.</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Security</th>
+                <th>Action</th>
+                <th>Volume</th>
+                <th>Time</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td>{{ row['stock'] }}</td>
+                    <td>{{ row['action'] }}</td>
+                    <td>{{ row['volume'] }}</td>
+                    <td>{{ row['time'] }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
