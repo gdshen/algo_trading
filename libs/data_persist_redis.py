@@ -34,7 +34,7 @@ def dataframe_convert_type(df):
          'b1_v', 'b2_p', 'b2_v', 'b3_p', 'b4_p', 'b4_v', 'b5_p', 'b5_v', 'bid', 'high', 'low', 'open', 'pre_close',
          'price', 'volume']].apply(pd.to_numeric)
 
-    df[['date', 'time']] = df[['date', 'time']].apply(pd.to_datetime)
+    df['time'] = pd.to_datetime(df['date'] + df['time'], format='%Y-%m-%d%H:%M:%S')
     return df
 
 
@@ -58,20 +58,21 @@ def retrieve_from_redis(stock):
 
 
 if __name__ == '__main__':
-    while True:
-        now = arrow.now('Asia/Shanghai').time()
-        morning_open_market_time = datetime.time(9, 30)
-        morning_close_market_time = datetime.time(11, 30)
+    # while True:
+    #     now = arrow.now('Asia/Shanghai').time()
+    #     morning_open_market_time = datetime.time(9, 30)
+    #     morning_close_market_time = datetime.time(11, 30)
+    #
+    #     afternoon_open_market_time = datetime.time(13, 0)
+    #     afternoon_close_market_time = datetime.time(15, 0)
+    #
+    #     if morning_open_market_time < now < morning_close_market_time \
+    #             or afternoon_open_market_time < now < afternoon_close_market_time:
+    #         for stock in stocks:
+    #             persist_to_redis(stock)
+    #             sleep(6 / len(stocks))
+    #     else:
+    #         sleep(6)
 
-        afternoon_open_market_time = datetime.time(13, 0)
-        afternoon_close_market_time = datetime.time(15, 0)
-
-        if morning_open_market_time < now < morning_close_market_time \
-                or afternoon_open_market_time < now < afternoon_close_market_time:
-            for stock in stocks:
-                persist_to_redis(stock)
-                sleep(6 / len(stocks))
-        else:
-            sleep(6)
-
-            # df = retrieve_from_redis('600000')
+    df = retrieve_from_redis('600000')
+    print(df)
