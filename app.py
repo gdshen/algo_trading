@@ -54,7 +54,7 @@ def home():
             wap = VWAP(data['security'], date.today().strftime('%Y-%m-%d'))
 
         user_id = current_user.get_id()
-        wap.save(user_id, data['operation'], data['shares'], [('09:30:00', "10:30:00")])
+        wap.save(user_id, data['operation'], data['shares'], convert_time(data['timeIntervals']))
         return 'success'
 
 
@@ -98,3 +98,14 @@ def convert(policies):
         for strategy in policy['policy']:
             data.append({'stock': stock, 'type': operation_type, 'wap': wap, 'volume': strategy[1][1], 'time': strategy[1][0]})
     return data
+
+
+def convert_time(time_intervals):
+    l = list()
+    for time_interval in time_intervals:
+        start = time_interval['start_time']
+        start_time = start['HH'] + ':' + start['mm'] + ':00'
+        end = time_interval['end_time']
+        end_time = end['HH'] + ':' + end['mm'] + ':00'
+        l.append((start_time, end_time))
+    return l
