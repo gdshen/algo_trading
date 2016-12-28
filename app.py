@@ -18,7 +18,7 @@ from datetime import date
 
 from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
 
-# logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
