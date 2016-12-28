@@ -33,9 +33,8 @@ def order_match():
                 for user_policy_element in user_policy['policy']:
                     order_point = user_policy_element[1][0]
                     order_num = user_policy_element[1][1]
-                    if (datetime.datetime.now()+datetime.timedelta(minutes=-157)).strftime("%X") == order_point:
+                    if (datetime.datetime.now()+datetime.timedelta(minutes=-185)).strftime("%X") == order_point:
                         current_data = retrieve_from_redis(user_policy['stock'])
-                        # print(current_data)
                         if user_policy['wap'] == 'twap' or user_policy['wap'] == 'vwap':
                             if user_policy['order_type'] == 'buy':
                                 if current_data['a1_v'].iloc[-1] < order_num:
@@ -48,7 +47,7 @@ def order_match():
                                     logging.warning(str(user) + "在" + str(order_point) + "时刻要卖出的关于" + user_policy[
                                         'stock'] + "股票的一单失败")
                         elif user_policy['wap'] == 'vwap_with_predict':
-                            if order_point <= "09:33:00":
+                            if order_point <= (current_data['time'].iloc[0] + datetime.timedelta(minutes=3)).strftime("%X"):
                                 if user_policy['order_type'] == 'buy':
                                     if current_data['a1_v'].iloc[-1] < order_num:
                                         logging.warning(
@@ -150,10 +149,11 @@ def order_match():
 
 
 if __name__ == '__main__':
-    #order_match()
+    order_match()
     # current_data = retrieve_from_redis('601398')
+    # print(current_data['time'].iloc[0] + datetime.timedelta(minutes=3))
     # datetime_format = '%Y-%m-%d%H:%M:%S'
-    # end_1min = datetime.datetime.strptime("2016-12-23" + "09:40:57", datetime_format)
+    # end_1min = datetime.datetime.strptime("2016-12-28" + "09:40:57", datetime_format)
     # start_1min = end_1min + datetime.timedelta(minutes=-1)
     # start_2min = start_1min + datetime.timedelta(minutes=-1)
     # start_3min = start_2min + datetime.timedelta(minutes=-1)
@@ -167,7 +167,7 @@ if __name__ == '__main__':
     #
     # price_3min = current_data[['price', 'volume']][
     #     (current_data['time'] >= start_3min) & (current_data['time'] <= start_2min)]
-    # # print(price_3min)
+    # print(price_3min)
     # price_2min = current_data[['price', 'volume']][
     #     (current_data['time'] >= start_2min) & (current_data['time'] <= start_1min)]
     # price_1min = current_data[['price', 'volume']][

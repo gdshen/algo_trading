@@ -27,5 +27,5 @@ class VWAP(NDayMean):
 
 
 if __name__ == '__main__':
-    seven_day_mean = VWAP('601398', '2016-12-22')
-    print(seven_day_mean.score(2000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
+    seven_day_mean = VWAP('601398', '2016-12-28')
+    print(seven_day_mean.save('123456', 'buy', 2000, [('09:55:00', '10:10:00')]))

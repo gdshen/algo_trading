@@ -7,7 +7,7 @@ from libs.policy.WAP import WAP
 
 
 class NDayMean(WAP):
-    def __init__(self, stock, date, n_days=7, n_slice=10):
+    def __init__(self, stock, date, n_days=15, n_slice=10):
         super().__init__(stock, date, n_days, n_slice)
         self.strategy = 'vwap'
         self.data = self.load_data()
