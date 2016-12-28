@@ -79,10 +79,11 @@ class BackTest(object):
             pass
 
         ax.set_xticks(range(len(result)))
-        ax.set_xticklabels(result['time'], rotation=0)
+        ax.set_xticklabels(range(len(result)), rotation=0)
         ax.set_ylabel('wap_value')
         ax.set_xlabel('Time')
         ax.set_ylim(ylim_min, ylim_max)
+        ax.text(3, ylim_max - 0.05, "wap_diff: " + str(self.diff()))
         ax2 = ax.twinx()
         ax2.plot(plot_data[['actual', 'predicted']].values, linestyle='-', marker='o', linewidth=2.0)
         ax2.set_ylabel('wap_value')

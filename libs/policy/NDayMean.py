@@ -69,7 +69,7 @@ class NDayMean(WAP):
 
 
 if __name__ == '__main__':
-    seven_day_mean = NDayMean('600000', '2016-12-22', 30)
+    seven_day_mean = NDayMean('601398', '2016-12-22')
     # l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
     # pprint(l)
     # l = seven_day_mean.wap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])

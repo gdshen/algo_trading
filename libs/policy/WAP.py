@@ -66,7 +66,7 @@ class WAP:
         policy['policy'] = l
         bt = BackTest(policy)
         result = bt.backtest()
-        bt.plot()
+        bt.plot().show()
         pprint(result)
         return bt.diff()
 
