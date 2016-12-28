@@ -185,17 +185,22 @@ def predictChange_Min(stockCode):
     X = preprocessing.scale(X)
     #trainX, testX, trainY, testY = train_test_split(X, Y, test_size = 0.2)
 
-    clf1 = DecisionTreeClassifier(max_depth = 4)
-    clf2 = neighbors.KNeighborsClassifier(n_neighbors = 5)
-    clf3 = svm.SVC(kernel = 'rbf', probability = True)
-    clf4 = AdaBoostClassifier(n_estimators = 200)
-    clf5 = GaussianNB()
-    eclf = VotingClassifier(estimators = [('dt', clf1), ('kn', clf2), ('svc', clf3), ('ab', clf4), ('gnb', clf5)], voting = 'hard')
+    clf = svm.SVC(kernel = 'rbf', C = 180, gamma = 4)
     #eclf.fit(trainX, trainY)
-    eclf.fit(X, Y)
-    joblib.dump(eclf, './model/%sChange_Min' % stockCode)
+    clf.fit(X, Y)
+    joblib.dump(clf, './model/%sChange_Min' % stockCode)
     '''
-    predictY = eclf.predict(testX)
+    clf.fit(trainX, trainY)
+    predictY = clf.predict(testX)
     accuracy = metrics.accuracy_score(testY, predictY)
     print(accuracy)
+    print(metrics.classification_report(testY, predictY))
+    cnt1 = 0
+    cnt2 = 0
+    for i in range(len(predictY)):
+        if predictY[i] == -1:
+            cnt2 += 1
+        else:
+            cnt1 += 1
+    print(cnt1, cnt2)
     '''
