@@ -1,6 +1,9 @@
 import json
 import logging
+import datetime
+from time import sleep
 
+import arrow
 import pandas as pd
 import redis
 import tushare as ts
@@ -10,16 +13,9 @@ logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=loggin
 r = redis.StrictRedis(host='192.168.1.150', port=6379, db=0)
 
 stocks = ['600000',
-          '601211',
           '601398',
-          '601766',
-          '600030',
-          '600887',
-          '601390',
           '601988',
-          '600104',
-          '600489',
-          '601117']
+         ]
 
 
 def dataframe_convert_type(df):
@@ -55,21 +51,21 @@ def retrieve_from_redis(stock):
 
 
 if __name__ == '__main__':
-    # while True:
-    #     now = arrow.now('Asia/Shanghai').time()
-    #     morning_open_market_time = datetime.time(9, 30)
-    #     morning_close_market_time = datetime.time(11, 30)
-    #
-    #     afternoon_open_market_time = datetime.time(13, 0)
-    #     afternoon_close_market_time = datetime.time(15, 0)
-    #
-    #     if morning_open_market_time < now < morning_close_market_time \
-    #             or afternoon_open_market_time < now < afternoon_close_market_time:
-    #         for stock in stocks:
-    #             persist_to_redis(stock)
-    #             sleep(6 / len(stocks))
-    #     else:
-    #         sleep(6)
+    while True:
+        now = arrow.now('Asia/Shanghai').time()
+        morning_open_market_time = datetime.time(9, 30)
+        morning_close_market_time = datetime.time(11, 30)
 
-    df = retrieve_from_redis('601398')
-    print(df)
+        afternoon_open_market_time = datetime.time(13, 0)
+        afternoon_close_market_time = datetime.time(15, 0)
+
+        if morning_open_market_time < now < morning_close_market_time \
+                or afternoon_open_market_time < now < afternoon_close_market_time:
+            for stock in stocks:
+                persist_to_redis(stock)
+                sleep(6 / len(stocks))
+        else:
+            sleep(6)
+
+    # df = retrieve_from_redis('601398')
+    # print(df)
