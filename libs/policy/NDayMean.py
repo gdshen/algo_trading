@@ -46,7 +46,7 @@ class NDayMean(WAP):
         time_interval_amount = self.time_interval_amount(start_time, end_time)
         result = 0.0
         for i in range(len(time_interval_amount)):
-            result += time_interval_amount[i] / pow(2, i + 1)
+            result += time_interval_amount[i] / pow(3, i + 1)
 
         return result
 
@@ -69,9 +69,10 @@ class NDayMean(WAP):
 
 
 if __name__ == '__main__':
-    seven_day_mean = NDayMean('601398', '2016-12-23')
-    l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
-    pprint(l)
-    l = seven_day_mean.wap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
-    pprint(l)
-    print(seven_day_mean.save('123456', 'buy', 2000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
+    seven_day_mean = NDayMean('600000', '2016-12-22', 30)
+    # l = seven_day_mean.time_slice([('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")], 8)
+    # pprint(l)
+    # l = seven_day_mean.wap(1000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")])
+    # pprint(l)
+    # print(seven_day_mean.save('123456', 'buy', 2000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))
+    print(seven_day_mean.score(2000, [('09:30:00', '10:30:00'), ('13:00:00', "13:40:00")]))

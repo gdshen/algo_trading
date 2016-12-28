@@ -61,18 +61,19 @@ class BackTest(object):
         return result
 
     def plot(self):
-        result = self.result
-        result = result.loc[0:len(result) - 2]
+        tmp_result = self.result
+        result = tmp_result.loc[0:len(tmp_result) - 2]
         plot_data = result.set_index('time')
         ylim_min = min(min(plot_data['actual']), min(plot_data['predicted'])) - 0.1
         ylim_max = max(max(plot_data['actual']), max(plot_data['predicted'])) + 0.1
 
         ax = plot_data[['actual', 'predicted']].plot(kind='bar', use_index=True)
-        if result['time'].loc[len(result) - 1] == "All Day VWAP":
+        print(tmp_result['time'].loc[len(result)])
+        if tmp_result['time'].loc[len(result)] == "All Day VWAP":
             ax.set_title('VWAP')
-        elif result['time'].loc[len(result) - 1] == "All Day VWAP_WITH_PREDICT":
+        elif tmp_result['time'].loc[len(result)] == "All Day VWAP_WITH_PREDICT":
             ax.set_title('VWAP_WITH_PREDICT')
-        elif result['time'].loc[len(result) - 1] == "All Day TWAP":
+        elif tmp_result['time'].loc[len(result)] == "All Day TWAP":
             ax.set_title('TWAP')
         else:
             pass
@@ -86,7 +87,7 @@ class BackTest(object):
         ax2.plot(plot_data[['actual', 'predicted']].values, linestyle='-', marker='o', linewidth=2.0)
         ax2.set_ylabel('wap_value')
         ax2.set_ylim(ylim_min, ylim_max)
-        plt.show()
+        return plt
 
     def diff(self):
         r = self.result
