@@ -145,15 +145,15 @@ def read_from_db(stock, day, morning_start=None, morning_end=None, afternoon_sta
 if __name__ == '__main__':
     # read_from_db('600000', '2016-12-21')
 
-    presents = arrow.now()
-    a_year_before = arrow.now().replace(years=-1)
+    # presents = arrow.now()
+    # a_year_before = arrow.now().replace(years=-1)
     #
-    for stock in stocks:
-        for r in arrow.Arrow.range('day', a_year_before, presents):
-            date = r.format('YYYY-MM-DD')
+    # for stock in stocks:
+    #     for r in arrow.Arrow.range('day', a_year_before, presents):
+    #         date = r.format('YYYY-MM-DD')
             #     read_from_db('600000', date)
             #     read_from_db('600000', date, 'NOT_USE', 'NOT_USE', '13:30', "14:30")
-            get_and_persist_data(stock, date)
+    get_and_persist_data('601988', '2016-12-23')
             # sleep(1)
             #
             # get_and_persist_data('601398', '2016-08-15')
