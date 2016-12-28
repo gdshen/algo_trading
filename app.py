@@ -15,7 +15,7 @@ from datetime import date
 
 from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
 
-logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
+# logging.basicConfig(format='%(asctime)s %(levelname)s:%(message)s', level=logging.DEBUG)
 
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
@@ -47,11 +47,11 @@ def home():
 
         wap = None
         if data['method'] == 'twap':
-            wap = TWAP(data['security'], date.today().strftime('%Y-%m-%d'))
+            wap = TWAP(data['security'], data['day'])
         elif data['method'] == 'vwap':
-            wap = NDayMean(data['security'], date.today().strftime('%Y-%m-%d'))
+            wap = NDayMean(data['security'], data['day'])
         elif data['method'] == 'vwap_with_predict':
-            wap = VWAP(data['security'], date.today().strftime('%Y-%m-%d'))
+            wap = VWAP(data['security'], data['day'])
 
         user_id = current_user.get_id()
         wap.save(user_id, data['operation'], data['shares'], convert_time(data['timeIntervals']))
@@ -72,6 +72,12 @@ def table():
 
     d = {"data": convert(policies=policies)}
     return jsonify(**d)
+
+
+@app.route('/result', methods=['GET'])
+@login_required
+def result():
+    return render_template('result.html')
 
 
 @app.route('/trend', methods=['GET'])
@@ -96,7 +102,8 @@ def convert(policies):
         operation_type = policy['order_type']
         wap = policy['wap']
         for strategy in policy['policy']:
-            data.append({'stock': stock, 'type': operation_type, 'wap': wap, 'volume': strategy[1][1], 'time': strategy[1][0]})
+            data.append({'stock': stock, 'type': operation_type, 'wap': wap, 'volume': strategy[1][1],
+                         'time': policy['day'] + ' ' + strategy[1][0]})
     return data
 
 

@@ -2,6 +2,7 @@ import getData
 import trainingModel
 import sys
 import predictAPI
+import pandas as pd
 
 def main(argv):
     for arg in argv:
@@ -19,12 +20,12 @@ def main(argv):
                 print('%s done!' % stockCode)
 
         elif arg == 'model':
-            stockCodeList = ['601398', '601988']
+            stockCodeList = ['601398']
             for stockCode in stockCodeList:
                 print(stockCode)
-                #trainingModel.predictVolume_Day(stockCode)
+                trainingModel.predictVolume_Day(stockCode)
                 trainingModel.predictChange_Day(stockCode)
-                #trainingModel.predictChange_Min(stockCode)
+                trainingModel.predictChange_Min(stockCode)
                 print('%s done!' % stockCode)
 
     '''usage example : predict day-level volume
@@ -38,19 +39,20 @@ def main(argv):
     #input format [1mAgoOpen, 1mAgoClose, 1mAgoLow, 1mAgoHigh, 1mAgoVolume, 1mAgoLabel,\
     #              2mAgoOpen, 2mAgoClose, 2mAgoLow, 2mAgoHigh, 2mAgoVolume, 2mAgoLabel,\
     #              3mAgoOpen, 3mAgoClose, 3mAgoLow, 3mAgoHigh, 3mAgoVolume, 3mAgoLabel]
-    input = [4.66, 4.66, 4.65, 4.66, 1915, -1,\
-             4.65, 4.65, 4.65, 4.66, 13589, -1,\
-             4.65, 4.66, 4.65, 4.66, 3415, -1]
+    input = [4.06, 4.05, 4.05, 4.06, 2021, 1, 4.05, 4.05, 4.05, 4.05, 7314, -1, 4.05, 4.06, 4.05, 4.06, 13012, -1]
     output = predictAPI.getMinChange(input, '601988')
     print(output)
     '''
-
-    '''usage example : predict day-level change
+    '''
+    #usage example : predict day-level change
     ## input format [...]
-    input = [500] * 55
-    output = predictAPI.getDayChange(input, '601988')
+    df = pd.read_csv('./data/%s/%sRiseFallDataDay.csv' % ('601398', '601398'))
+    l = len(df)
+    input = df.iloc[l - 1, 1 : 56]
+    output = predictAPI.getDayChange(input, '601398')
     print(output)
     '''
+
 
 if __name__ == "__main__":
     main(sys.argv)
