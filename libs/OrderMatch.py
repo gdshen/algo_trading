@@ -33,7 +33,7 @@ def order_match():
                 for user_policy_element in user_policy['policy']:
                     order_point = user_policy_element[1][0]
                     order_num = user_policy_element[1][1]
-                    if (datetime.datetime.now()+datetime.timedelta(minutes=462)).strftime("%X") == order_point:
+                    if (datetime.datetime.now()+datetime.timedelta(minutes=-157)).strftime("%X") == order_point:
                         current_data = retrieve_from_redis(user_policy['stock'])
                         # print(current_data)
                         if user_policy['wap'] == 'twap' or user_policy['wap'] == 'vwap':
@@ -150,7 +150,7 @@ def order_match():
 
 
 if __name__ == '__main__':
-    order_match()
+    #order_match()
     # current_data = retrieve_from_redis('601398')
     # datetime_format = '%Y-%m-%d%H:%M:%S'
     # end_1min = datetime.datetime.strptime("2016-12-23" + "09:40:57", datetime_format)
@@ -192,6 +192,8 @@ if __name__ == '__main__':
     users = read_from_redis()
     pprint(users)
     # for user in users:
+    #     r = redis.StrictRedis(REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB)
+    #     r.delete(user)
     #     user_policys = users[user]
     #     pprint(users[user])
         # for user_policy in user_policys:
