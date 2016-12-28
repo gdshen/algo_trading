@@ -87,7 +87,7 @@
                 },
                 day: '2016-12-28',
                 timeArray: [
-                    {start_time: {HH: '09', mm: '30'}, end_time: {HH: '09', mm: '30'}}
+                    {start_time: {HH: '09', mm: '30'}, end_time: {HH: '11', mm: '30'}}
                 ]
             },
             methods: {
@@ -101,7 +101,7 @@
                         timeIntervals: vm.timeArray,
                         day: vm.day
                     }).then(function (response) {
-                        alert('submit success!');
+                        alert('submit success!');   
 {#                        console.log(response.data)#}
 {#                        console.log(vm.day)#}
                     }).catch(function (error) {
@@ -111,29 +111,11 @@
                 },
 
                 addTimeInterval: function () {
-                    let d = {start_time: {HH: '09', mm: '30'}, end_time: {HH: '09', mm: '30'}};
+                    let d = {start_time: {HH: '13', mm: '00'}, end_time: {HH: '15', mm: '00'}};
                     this.timeArray.push(d);
                 }
             }
         });
 
-        {#        let yourComponent = new Vue({#}
-        {#            el: "#time",#}
-        {#            components: { VueTimepicker },#}
-        {#            delimiters: ['${', '}'],#}
-        {#            data: {#}
-        {#                timeValue: {#}
-        {#                    HH: "10",#}
-        {#                    mm: "05"#}
-        {#                    ss: "00"#}
-        {#                }#}
-        {#                yourDaysArray: [#}
-        {#                                        {start_time: {HH: '08', mm: '00'}, end_time: {HH: '09', mm: '00'}},#}
-        {#                                        {start_time: {HH: '15', mm: '00'}, end_time: {HH: '', mm: ''}},#}
-        {#                                        {start_time: {HH: '', mm: ''}, end_time: {HH: '13', mm: '30'}},#}
-        {#                                        {start_time: {HH: '', mm: ''}, end_time: {HH: '', mm: ''}}#}
-        {#                ]#}
-        {#            }#}
-        {#        });#}
     </script>
 {% endblock %}

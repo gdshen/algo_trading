@@ -74,6 +74,12 @@ def table():
     return jsonify(**d)
 
 
+@app.route('/result', methods=['GET'])
+@login_required
+def result():
+    return render_template('result.html')
+
+
 @app.route('/trend', methods=['GET'])
 @login_required
 def trend():
