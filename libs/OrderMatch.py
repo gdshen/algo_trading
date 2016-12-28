@@ -36,7 +36,7 @@ def order_match():
                 for user_policy_element in user_policy['policy']:
                     order_point = user_policy_element[1][0]
                     order_num = user_policy_element[1][1]
-                    if (datetime.datetime.now()+datetime.timedelta(minutes=-200)).strftime("%X") == order_point:
+                    if (datetime.datetime.now()+datetime.timedelta(minutes=0)).strftime("%X") == order_point:
                         current_data = retrieve_from_redis(user_policy['stock'])
                         if user_policy['wap'] == 'twap' or user_policy['wap'] == 'vwap':
                             if user_policy['order_type'] == 'buy':
