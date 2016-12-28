@@ -1,5 +1,5 @@
 # setting debug mode
-DEBUG = True
+DEBUG = False
 
 # secret_key that need to make CSRF protection
 SECRET_KEY = 'this_is_a_secret_key'
