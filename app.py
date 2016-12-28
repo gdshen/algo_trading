@@ -1,9 +1,11 @@
 import json
 import logging
+from io import BytesIO
 
 import redis
 from flask import Flask, render_template, request
 from flask import jsonify
+from flask import send_file
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_required, current_user
 from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
@@ -11,6 +13,7 @@ from flask_mongoengine import MongoEngine, MongoEngineSessionInterface
 from libs.policy.NDayMean import NDayMean
 from libs.policy.TWAP import TWAP
 from libs.policy.VWAP import VWAP
+from libs.back_test import BackTest
 from datetime import date
 
 from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
@@ -80,6 +83,33 @@ def result():
     return render_template('result.html')
 
 
+@app.route('/policy_amount', methods=['GET'])
+@login_required
+def policy_amount():
+    user_id = current_user.get_id()
+    length = redis_user_policies_amoujnt(user_id)
+    l = []
+    for i in range(length):
+        l.append({'text': 'The ' + str(i + 1) + ' order', 'value': str(i)})
+    data = {'data': l}
+    return jsonify(data)
+
+
+@app.route('/png/<order>', methods=['GET'])
+@login_required
+def image(order):
+    user_id = current_user.get_id()
+    policies = read_from_redis(user_id)
+    policy = policies[int(order)]
+    bt = BackTest(policy)
+    bt.backtest()
+    fig = bt.plot()
+    img = BytesIO()
+    fig.savefig(img)
+    img.seek(0)
+    return send_file(img, mimetype='image/png')
+
+
 @app.route('/trend', methods=['GET'])
 @login_required
 def trend():
@@ -93,6 +123,12 @@ def read_from_redis(user_id):
     for value in values:
         policies.append(json.loads(value.decode(encoding='UTF-8')))
     return policies
+
+
+def redis_user_policies_amoujnt(user_id):
+    r = redis.StrictRedis(REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB)
+    length = r.llen(user_id)
+    return length
 
 
 def convert(policies):

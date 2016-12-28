@@ -1,8 +1,48 @@
 {% extends 'user.html' %}
 {% block head %}
-    <title>Predict</title>
+    <title>Result</title>
 {% endblock %}
 
 {% block content %}
+    <div class="container">
+        <div id="result">
+            <div class="row">
+                <div class="col-md-4 col-md-offset-5">
+                    <select v-model="selected">
+                        <option v-for="option in options" v-bind:value="option.value">
+                            ${ option.text }
+                        </option>
+                    </select>
+                </div>
+            </div>
 
+            <div class="row">
+                <div class="col-md-4 col-md-offset-2">
+                    <img v-bind:src="'https://trade.gdshen.me/png/' + selected" alt="Please choose order">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: "#result",
+            delimiters: ['${', '}'],
+            data: {
+                selected: "0",
+                options: [
+                    {text: "the 1 order", value: "0"}
+                ]
+            },
+            created: function () {
+                let vm = this;
+                axios.get('/policy_amount').then(function (response) {
+                    vm.options = response.data.data;
+                    console.log(response.data.data);
+                }).catch(function (error) {
+                    console.log(error);
+                });
+            }
+        })
+    </script>
 {% endblock %}

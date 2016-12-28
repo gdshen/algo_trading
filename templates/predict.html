@@ -28,11 +28,11 @@
                 let vm = this;
                 axios.get('/table').then(function (response) {
                     vm.tableData = response.data.data;
+                    vm.loaded = true;
                     console.log(response.data.data);
                 }).catch(function (error) {
                     console.log(error);
                 });
-                vm.loaded = true
             }
         });
     </script>
