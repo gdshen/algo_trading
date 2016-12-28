@@ -28,14 +28,16 @@ class BackTest(object):
             end = datetime.datetime.strptime(predicted_wap['day'] + __policy[index][0][1], datetime_format)
             order_point = datetime.datetime.strptime(predicted_wap['day'] + __policy[index][1][0], datetime_format)
 
-            if predicted_wap['wap'] == "vwap":
+            if predicted_wap['wap'] == "vwap" or predicted_wap['wap'] == "vwap_with_predict":
                 actual_vwap_data = data_of_today[['amount', 'volume']][
                     (data_of_today['time'] > start) & (data_of_today['time'] < end)]
                 actual_vwap = sum(actual_vwap_data['amount']) / sum(actual_vwap_data['volume']) / 100
-            else:
+            elif predicted_wap['wap'] == "twap":
                 actual_vwap_data = data_of_today['price'][
                     (data_of_today['time'] > start) & (data_of_today['time'] < end)]
                 actual_vwap = sum(actual_vwap_data) / len(actual_vwap_data)
+            else:
+                pass
 
             predicted_vwap = data_of_today['price'][
                 (data_of_today['time'] < order_point) & (
@@ -48,8 +50,8 @@ class BackTest(object):
             result.loc[index] = [__policy[index][0][0] + "-" + __policy[index][0][1], actual_vwap,
                                  predicted_vwap]
 
-        if predicted_wap['wap'] == "vwap":
-            result.loc[len(__policy)] = ["All Day VWAP",
+        if predicted_wap['wap'] == "vwap" or predicted_wap['wap'] == "vwap_with_predict":
+            result.loc[len(__policy)] = ["All Day "+ predicted_wap['wap'].upper(),
                                          sum(data_of_today['amount']) / sum(data_of_today['volume']) / 100,
                                          vwap_amount / vwap_volume]
         elif predicted_wap['wap'] == "twap":
@@ -68,8 +70,12 @@ class BackTest(object):
         ax = plot_data[['actual', 'predicted']].plot(kind='bar', use_index=True)
         if result['time'].loc[len(result) - 1] == "All Day VWAP":
             ax.set_title('VWAP')
+        elif result['time'].loc[len(result) - 1] == "All Day VWAP_WITH_PREDICT":
+            ax.set_title('VWAP_WITH_PREDICT')
         elif result['time'].loc[len(result) - 1] == "All Day TWAP":
             ax.set_title('TWAP')
+        else:
+            pass
 
         ax.set_xticks(range(len(result)))
         ax.set_xticklabels(result['time'], rotation=0)
