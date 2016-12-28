@@ -3,6 +3,7 @@ import json
 import logging
 import random
 import time
+import warnings
 from pprint import pprint
 
 import redis
@@ -11,6 +12,8 @@ from config import REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB
 from libs.data_persist_redis import retrieve_from_redis
 from predict.predictAPI import getMinChange
 
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
 
 def read_from_redis():
     r = redis.StrictRedis(REDIS_SERVER_HOST, REDIS_SERVER_PORT, REDIS_SERVER_DB)
@@ -33,7 +36,7 @@ def order_match():
                 for user_policy_element in user_policy['policy']:
                     order_point = user_policy_element[1][0]
                     order_num = user_policy_element[1][1]
-                    if (datetime.datetime.now()+datetime.timedelta(minutes=-185)).strftime("%X") == order_point:
+                    if (datetime.datetime.now()+datetime.timedelta(minutes=-200)).strftime("%X") == order_point:
                         current_data = retrieve_from_redis(user_policy['stock'])
                         if user_policy['wap'] == 'twap' or user_policy['wap'] == 'vwap':
                             if user_policy['order_type'] == 'buy':
@@ -41,11 +44,13 @@ def order_match():
                                     logging.warning(str(user) + "在" + str(order_point) + "时刻要买入的关于" + user_policy[
                                         'stock'] + "股票的一单失败")
                                 else:
-                                    pass
+                                    print("match!!!\n")
                             else:
                                 if current_data['b1_v'].iloc[-1] < order_num:
                                     logging.warning(str(user) + "在" + str(order_point) + "时刻要卖出的关于" + user_policy[
                                         'stock'] + "股票的一单失败")
+                                else:
+                                    print("match!!!\n")
                         elif user_policy['wap'] == 'vwap_with_predict':
                             if order_point <= (current_data['time'].iloc[0] + datetime.timedelta(minutes=3)).strftime("%X"):
                                 if user_policy['order_type'] == 'buy':
@@ -54,13 +59,13 @@ def order_match():
                                             str(user) + "在" + str(order_point) + "时刻要买入的关于" + user_policy[
                                                 'stock'] + "股票的一单失败")
                                     else:
-                                        print("match!!!")
+                                        print("match!!!\n")
                                 else:
                                     if current_data['b1_v'].iloc[-1] < order_num:
                                         logging.warning(str(user) + "在" + str(order_point) + "时刻要卖出的关于" + user_policy[
                                             'stock'] + "股票的一单失败")
                                     else:
-                                        print("match!!!")
+                                        print("match!!!\n")
                             else:
                                 datetime_format = '%Y-%m-%d%H:%M:%S'
                                 end_1min = datetime.datetime.strptime(user_policy['day'] + order_point, datetime_format)
@@ -106,7 +111,7 @@ def order_match():
                                                 str(user) + "在" + str(order_point) + "时刻要买入的关于" + user_policy[
                                                     'stock'] + "股票的一单失败")
                                         else:
-                                            print("match!!!")
+                                            print("match!!!\n")
                                     else:
                                         if ((end_1min + datetime.timedelta(minutes=1)).strftime("%X") <=
                                                 user_policy_element[0][1]):  ### 判断加一分钟是否超出时间段
@@ -118,7 +123,7 @@ def order_match():
                                             for u in users[user]:
                                                 r.rpush(user, json.dumps(u))
                                         else:
-                                            print("TimeOut")
+                                            print("TimeOut\n")
                                 elif user_policy['order_type'] == 'sell':
                                     if next_min_trend == 1:
                                         threshold_value = 0.8
@@ -130,7 +135,7 @@ def order_match():
                                                 str(user) + "在" + str(order_point) + "时刻要卖出的关于" + user_policy[
                                                     'stock'] + "股票的一单失败")
                                         else:
-                                            print("match!!!")
+                                            print("match!!!\n")
                                     else:
                                         if ((end_1min + datetime.timedelta(minutes=1)).strftime("%X") <=
                                                 user_policy_element[0][1]):
@@ -142,7 +147,7 @@ def order_match():
                                             for u in users[user]:
                                                 r.rpush(user, json.dumps(u))
                                         else:
-                                            print("match!!!")
+                                            print("match!!!\n")
                     else:
                         continue
         time.sleep(1)
