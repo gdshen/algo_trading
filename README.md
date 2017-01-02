@@ -1,15 +1,25 @@
-# algo_trading
-Algorithmic Trading Code Of SJTU Team
+# Algorithmic Trading
+## Project description
+
+This project is for *Financial Computing Service* course which is hosted by **Shanghai Jiao Tong University** with **Morgan Stanley**. 
+
+## What is algorithmic trading?
+
+From [wikipedia](https://en.wikipedia.org/wiki/Algorithmic_traing)
+
+> Algorithmic trading is a method of executing a large order(too large to fill all at once) using automated  pro-programmed trading instructions accounting for variables such as time, price, and volume to send small slices of the order (child orders) out to the market overtime.
+
+
 
 ## Dependency
-to run data_feed.py, we need
 
-```
+You need all these third-party python library to run the whole program. (Note that we just test the project under python 3.5.2, but it should work with any python version that support all these library)
+
+```bash
 aiohttp
 requests
 pandas
 tushare
-zerorpc # first pip3 uninstall msgpack-python before install zerorpc
 html5lib
 pymongo
 mongoengine
@@ -18,48 +28,35 @@ flask
 flask-mongoengine
 flask-bcrypt
 flask-debugtoolbar
+flask-login
 redis
 ```
 
-and create database called `trade` in mysql server.
+## Project structure
 
-## Mongodb
-[install mongodb on windows and start mongodb as windows services](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/)
-[install mongodb on ubuntu](https://docs.mongodb.com/v3.2/tutorial/install-mongodb-on-ubuntu/)
+`libs.policy` holds policy of slicing orders.(including a trival twap, vwap by n days mean volume and vwap with prediction)
 
-After set configuration from this tutorial, just use `net start MongoDB` to start mongodb services.
+`libs.back_test.py` for backtest the performance of one of the three policy.
 
-## database design
-### user authentication
+`libs.data_persist_mongodb.py` persists historical tick data to mongodb.
 
-### stocks owned by users
-one user is a document, all users forms a collection. stocks owned by uses as a list.
-1. user id
-2. stock id
-3. amount 
+`libs.data_persisit_redis.py` persists realtime quotes into redis server.
 
-### users pending orders
-1. user id
-2. stock id
-3. action
-4. amount
-5. time to put into market
-6. status
+`libs.OrderMatch` does order match inside our system with the real market.
 
-### users order history
-1. user id
-2. stock id
-3. action
-4. amount
-5. time that put into market
-6. time that matched
+`predict` contains machine learning algorithm of predicting the trend and volume of a security
 
-## how to make a flask login system
-1. flask_login (User class, user_load methods)
-2. login view
-3. forms
+`static` hosts the static resources needed by flask web framework.
 
-## Python docstring
+`template` hosts html files need by flask web framework.
+
+`app.py auth.py forms.py models.py user.py` are all python files for run flask web framework.
+
+`presentation` keynotes for presentation our project.
+
+
+
+### Python docstring format we use
 
 ```python
 def function_name(param1, param2):
@@ -74,31 +71,4 @@ def function_name(param1, param2):
     :return return_value
     :rtype: return type of the return value
     '''
-```
-
-# todo
-security redis server (before it is finally coded)
-separate flask application with algo engine using rpc
-
-
-# data structure of predicted vwap
-predicted_vwap: dict
-
-example:
-```
-{
-    'stock': '60000',
-    'day': '2016-12-23',
-    'morning_start': '09:30:00',
-    'morning_end': '11:30:00'
-    'afternoon_start': 'NOT_USE'
-    'afternoon_end': 'NOT_USE'
-     'wap': 'vwap', # or use 'twap'
-    'policy': [(('09:40:00', '09:50:00'), ("09:45:00", 1000)),
-               (('09:50:00', '10:00:00'), ("09:54:00", 2000)),
-               (('10:00:00', '10:10:00'), ("10:06:00", 1500)),
-               (('10:10:00', '10:20:00'), ("10:17:00", 2000)),
-               ...
-              ]
-}
 ```
