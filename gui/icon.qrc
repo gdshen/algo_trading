@@ -1,9 +1,0 @@
-<!DOCTYPE RCC><RCC version="1.0">
-<qresource>
-<file alias="appicon.png">images/appicon.png</file>
-<file alias="find.png">images/find.png</file>
-<file alias="show.png">images/show.png</file>
-<file alias="create.png">images/create.png</file>
-<file alias="history.png">images/history.png</file>
-</qresource>
-</RCC>
