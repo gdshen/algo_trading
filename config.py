@@ -17,13 +17,13 @@ SSL_OR_NOT = True
 # mongodb database access configuration
 MONGODB_SETTINGS = {
     'db': 'trade',
-    'host': 'lab.gdshen.me',
-    'port': 27017
+    'host': 'HOST_FOR_YOUR_MONGODB_SERVER',
+    'port': 'PORT_NUMBER_FOR_YOUR_MONGODB_SERVER'
 }
 
-MONGODB_URL = 'mongodb://lab.gdshen.me:27017'
-REDIS_SERVER_HOST = '192.168.1.150'
-REDIS_SERVER_PORT = '6379'
+MONGODB_URL = 'mongodb://host:port'
+REDIS_SERVER_HOST = 'REDIS_HORT'
+REDIS_SERVER_PORT = 'REDIS_PORT'
 REDIS_SERVER_DB = 1
 
 MARKET_MORNING_OPEN = "09:30"
